@@ -16,3 +16,12 @@ Base units are used in a semi-autonomous mode to automate various tasks. This be
 Main unit communicates with the base units using AndamBus protocol, which is a protocol developed for this purpose. Physical layer is built on RS485, while using a main unit as a bus arbiter sending command to a specific unit identified by address. The specific unit answers only to commands, where it is addressed. Communication speed is set to fixed 115200, which is tested and used in my environment.
 
 Arduino units are using their EEPROM to store the configuration including any service information like unit address.
+
+
+#How to use
+Project consists of 2 main parts:
+    Arduino part you can find in Arduino directory
+    Linux part where you can find the library and the command line app in the linux directory
+    
+Arduino part can be built using standard Arduino tools downloadable from the official site. Ino subdir contans the Arduino project itself, while the others are the libraries and needed to copy to the Arduino library folder
+Linux part can be built using CodeBlocks with target libIntel or libArm depending on your target architecture. The command line tool is built with target cl intel or cl arm - again depending on your arch.
