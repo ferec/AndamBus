@@ -1,0 +1,455 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="andamBus" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="TestIntel">
+				<Option output="bin/intel/testMaster" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add directory="../rs485" />
+					<Add directory="include" />
+					<Add directory="../andamBus" />
+					<Add directory="arduino" />
+					<Add directory="testing" />
+				</Compiler>
+				<Linker>
+					<Add library="pthread" />
+				</Linker>
+			</Target>
+			<Target title="libIntel">
+				<Option output="bin/intel/AndamBus" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="../rs485" />
+					<Add directory="include" />
+					<Add directory="../andamBus" />
+					<Add directory="arduino" />
+				</Compiler>
+				<ExtraCommands>
+					<Add after="cp bin/intel/libAndamBus.so ../libs/gcc/" />
+				</ExtraCommands>
+			</Target>
+			<Target title="libArm">
+				<Option output="bin/arm/AndamBus" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/arm/" />
+				<Option type="3" />
+				<Option compiler="raspberry1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-fno-strict-aliasing" />
+					<Add directory="../rs485" />
+					<Add directory="include" />
+					<Add directory="../andamBus" />
+					<Add directory="arduino" />
+				</Compiler>
+				<Linker>
+					<Add directory="../libs/arm" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="cp bin/arm/libAndamBus.so ../libs/arm/" />
+				</ExtraCommands>
+			</Target>
+			<Target title="broadcastServer">
+				<Option output="bin/intel/bcsrv" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+			</Target>
+			<Target title="abutest">
+				<Option output="bin/intel/testSlave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="." />
+					<Add directory="arduino" />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add directory="../libs/gcc" />
+				</Linker>
+			</Target>
+			<Target title="andamBusMonitor">
+				<Option output="bin/intel/andamBusMonitor" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="test" />
+				<Compiler>
+					<Add directory="../andamBus" />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add directory="../libs/gcc" />
+				</Linker>
+			</Target>
+			<Target title="cl arm">
+				<Option output="bin/arm/abc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/arm/" />
+				<Option type="1" />
+				<Option compiler="raspberry1" />
+				<Compiler>
+					<Add directory="." />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add directory="../libs/arm" />
+				</Linker>
+			</Target>
+			<Target title="andamBusMonitor ARM">
+				<Option output="bin/arm/andamBusMonitor" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/arm/" />
+				<Option type="1" />
+				<Option compiler="raspberry1" />
+				<Option parameters="test" />
+				<Compiler>
+					<Add directory="../andamBus" />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add directory="../libs/arm2/" />
+				</Linker>
+			</Target>
+			<Target title="cl intel">
+				<Option output="bin/intel/abc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="." />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add directory="../libs/gcc" />
+				</Linker>
+			</Target>
+			<Target title="qtest intel">
+				<Option output="bin/intel/qtest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="test 3" />
+				<Compiler>
+					<Add directory="." />
+				</Compiler>
+				<Linker>
+					<Add library="curses" />
+					<Add library="AndamBus" />
+					<Add directory="../libs/gcc" />
+				</Linker>
+			</Target>
+			<Target title="qtest arm">
+				<Option output="bin/arm/qtest" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/arm" />
+				<Option type="1" />
+				<Option compiler="raspberry1" />
+				<Option parameters="test 3" />
+				<Compiler>
+					<Add directory="." />
+				</Compiler>
+				<Linker>
+					<Add library="ncurses" />
+					<Add library="AndamBus" />
+					<Add library="tinfo" />
+					<Add directory="../libs/arm" />
+				</Linker>
+			</Target>
+			<Target title="icontrolDriver intel">
+				<Option output="bin/intel/ABus" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="include" />
+					<Add directory="../andamBus" />
+				</Compiler>
+				<Linker>
+					<Add library="../libs/gcc/libAndamBus.so" />
+					<Add library="../libs/gcc/libDriverBase.a" />
+				</Linker>
+				<ExtraCommands>
+					<Add after="cp bin/intel/libABus.so ../iControl/drivers/" />
+				</ExtraCommands>
+			</Target>
+			<Target title="icontrolDriver arm">
+				<Option output="bin/arm/ABus" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/arm/" />
+				<Option type="3" />
+				<Option compiler="raspberry1" />
+				<Compiler>
+					<Add directory="include" />
+					<Add directory="../andamBus" />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add library="DriverBase" />
+					<Add directory="../libs/arm" />
+				</Linker>
+			</Target>
+			<Target title="drvTest">
+				<Option output="bin/intel/andamBus" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/intel/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add directory="../andamBus" />
+				</Compiler>
+				<Linker>
+					<Add library="AndamBus" />
+					<Add directory="../libs/gcc" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-std=c++11" />
+			<Add option="-fPIC" />
+		</Compiler>
+		<Linker>
+			<Add library="z" />
+		</Linker>
+		<Unit filename="AndamBus.h">
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="AndamBusMaster.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="AndamBusMaster.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="AndamBusSlave.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="AndamBusSlave.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="AndamBusUnit.cpp">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="AndamBusUnit.h">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="BroadcastSocket.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="BroadcastSocket.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="ChangeListener.h">
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="SerialBroadcastSocket.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="SerialBroadcastSocket.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="abc.cpp">
+			<Option target="cl arm" />
+			<Option target="cl intel" />
+		</Unit>
+		<Unit filename="arduino/SlaveCapability.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="arduino/SlaveCapability.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/PropertyContainer.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/PropertyContainer.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/SlaveSecondaryBus.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/SlaveSecondaryBus.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/SlaveVirtualDevice.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/SlaveVirtualDevice.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/SlaveVirtualPort.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="domain/SlaveVirtualPort.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="drvTest.cpp">
+			<Option target="drvTest" />
+		</Unit>
+		<Unit filename="icontrolDriver.cpp">
+			<Option target="icontrolDriver intel" />
+			<Option target="icontrolDriver arm" />
+			<Option target="drvTest" />
+		</Unit>
+		<Unit filename="icontrolDriver.h">
+			<Option target="icontrolDriver intel" />
+			<Option target="icontrolDriver arm" />
+			<Option target="drvTest" />
+		</Unit>
+		<Unit filename="rs485SerialTest.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="shared/AndamBusExceptions.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="shared/AndamBusExceptions.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="andamBusMonitor" />
+			<Option target="libArm" />
+			<Option target="andamBusMonitor ARM" />
+		</Unit>
+		<Unit filename="shared/AndamBusStrings.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="shared/AndamBusTypes.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="andamBusMonitor" />
+			<Option target="libArm" />
+			<Option target="andamBusMonitor ARM" />
+		</Unit>
+		<Unit filename="testing/LocalBroadcastSocket.cpp">
+			<Option target="TestIntel" />
+			<Option target="abutest" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="testing/LocalBroadcastSocket.h">
+			<Option target="TestIntel" />
+			<Option target="abutest" />
+			<Option target="libIntel" />
+			<Option target="libArm" />
+		</Unit>
+		<Unit filename="testing/TestAndamBusUnit.cpp">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="testing/TestAndamBusUnit.h">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="testing/TestBroadcastSocket.cpp">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="testing/TestBroadcastSocket.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="testing/TestItem.cpp">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="testing/TestItem.h">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="testing/broadcastServer.cpp">
+			<Option target="broadcastServer" />
+		</Unit>
+		<Unit filename="testing/broadcastServer.h">
+			<Option target="TestIntel" />
+			<Option target="broadcastServer" />
+		</Unit>
+		<Unit filename="testing/commTest.cpp">
+			<Option target="TestIntel" />
+		</Unit>
+		<Unit filename="testing/monitor.cpp">
+			<Option target="andamBusMonitor" />
+			<Option target="andamBusMonitor ARM" />
+		</Unit>
+		<Unit filename="testing/qtest.cpp">
+			<Option target="qtest intel" />
+			<Option target="qtest arm" />
+		</Unit>
+		<Unit filename="testing/unit.cpp">
+			<Option target="abutest" />
+		</Unit>
+		<Unit filename="util.cpp">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="libArm" />
+			<Option target="qtest intel" />
+			<Option target="qtest arm" />
+			<Option target="broadcastServer" />
+		</Unit>
+		<Unit filename="util.h">
+			<Option target="TestIntel" />
+			<Option target="libIntel" />
+			<Option target="abutest" />
+			<Option target="andamBusMonitor" />
+			<Option target="libArm" />
+			<Option target="andamBusMonitor ARM" />
+			<Option target="qtest intel" />
+			<Option target="qtest arm" />
+			<Option target="broadcastServer" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

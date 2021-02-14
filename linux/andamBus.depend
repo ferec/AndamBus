@@ -1,0 +1,580 @@
+# depslib dependency file v1.0
+1612021011 source:/home/ferec/ws/andamBus/AndamBusMaster.cpp
+	"AndamBusMaster.h"
+	"AndamBusSlave.h"
+	"AndamBusUnit.h"
+	"shared/AndamBusExceptions.h"
+	"util.h"
+	<iostream>
+	<chrono>
+	<thread>
+	<arpa/inet.h>
+	<zlib.h>
+	<string.h>
+
+1610105364 /home/ferec/ws/andamBus/AndamBusMaster.h
+	<string>
+	<vector>
+	<mutex>
+	"BroadcastSocket.h"
+	"shared/AndamBusTypes.h"
+	"domain/SlaveVirtualDevice.h"
+	"util.h"
+
+1604177440 /home/ferec/ws/andamBus/BroadcastSocket.h
+	<inttypes.h>
+	<chrono>
+	"shared/AndamBusTypes.h"
+
+1570125118 /home/ferec/ws/andamBus/AndamBusTypes.h
+	<inttypes.h>
+
+1569079061 /home/ferec/ws/andamBus/SlaveVirtualDevice.h
+	<inttypes.h>
+	<string>
+	"AndamBusTypes.h"
+	"SlaveSecondaryBus.h"
+	"PropertyContainer.h"
+
+1569069228 /home/ferec/ws/andamBus/SlaveSecondaryBus.h
+	<stdint.h>
+	<vector>
+	"AndamBusTypes.h"
+	"PropertyContainer.h"
+
+1567775566 /home/ferec/ws/andamBus/PropertyContainer.h
+	"AndamBusTypes.h"
+	<map>
+	<string>
+
+1610105131 /home/ferec/ws/andamBus/AndamBusSlave.h
+	<inttypes.h>
+	<iostream>
+	<vector>
+	<set>
+	"AndamBusMaster.h"
+	"domain/SlaveVirtualPort.h"
+	"domain/SlaveVirtualDevice.h"
+	"domain/SlaveSecondaryBus.h"
+	"domain/PropertyContainer.h"
+	"ChangeListener.h"
+
+1569069583 /home/ferec/ws/andamBus/SlaveVirtualPort.h
+	<inttypes.h>
+	<string>
+	"AndamBusTypes.h"
+	"PropertyContainer.h"
+
+1570125471 /home/ferec/ws/andamBus/AndamBusExceptions.h
+	"AndamBusTypes.h"
+	"AndamUtils.h"
+
+1570128253 /home/ferec/ws/andamBus/AndamUtils.h
+	"AndamBusTypes.h"
+	"ArduinoLogger.h"
+	"Utils.h"
+	<sstream>
+	<netinet/in.h>
+
+1612021094 source:/home/ferec/ws/andamBus/AndamBusSlave.cpp
+	"AndamBusSlave.h"
+	"domain/SlaveVirtualDevice.h"
+	"shared/AndamBusExceptions.h"
+	<arpa/inet.h>
+	<bitset>
+
+1570128224 source:/home/ferec/ws/andamBus/AndamUtils.cpp
+	"AndamUtils.h"
+	<iostream>
+
+1612021181 source:/home/ferec/ws/andamBus/BroadcastSocket.cpp
+	"BroadcastSocket.h"
+	"shared/AndamBusExceptions.h"
+	"util.h"
+	<zlib.h>
+	<thread>
+
+1569931711 source:/home/ferec/ws/andamBus/commTest.cpp
+	<iostream>
+	<chrono>
+	"AndamBus.h"
+	"SerialBroadcastSocket.h"
+	"TestBroadcastSocket.h"
+	"LocalBroadcastSocket.h"
+	<fcntl.h>
+	<unistd.h>
+
+1569761267 /home/ferec/ws/andamBus/TestBroadcastSocket.h
+	"BroadcastSocket.h"
+	"AndamBusTypes.h"
+
+1567851505 source:/home/ferec/ws/andamBus/PropertyContainer.cpp
+	"PropertyContainer.h"
+	"AndamBusExceptions.h"
+
+1567775566 source:/home/ferec/ws/andamBus/SlaveSecondaryBus.cpp
+	"SlaveSecondaryBus.h"
+
+1569069439 source:/home/ferec/ws/andamBus/SlaveVirtualDevice.cpp
+	"SlaveVirtualDevice.h"
+
+1569929822 source:/home/ferec/ws/andamBus/TestBroadcastSocket.cpp
+	"TestBroadcastSocket.h"
+	<iostream>
+	<arpa/inet.h>
+	<string.h>
+	<zlib.h>
+	"AndamBusExceptions.h"
+	"SlaveVirtualPort.h"
+	"SlaveVirtualDevice.h"
+	"AndamUtils.h"
+
+1569138041 source:/home/ferec/ws/andamBus/SlaveVirtualPort.cpp
+	"SlaveVirtualPort.h"
+	<iostream>
+
+1570128687 /home/ferec/ws/andamBus/AndamBus.h
+	"shared/AndamBusExceptions.h"
+	"shared/AndamBusTypes.h"
+	"shared/BroadcastSocket.h"
+	"AndamBusMaster.h"
+	"AndamBusSlave.h"
+
+1604177422 /home/ferec/ws/andamBus/SerialBroadcastSocket.h
+	"BroadcastSocket.h"
+	<string>
+	<chrono>
+
+1612021169 source:/home/ferec/ws/andamBus/SerialBroadcastSocket.cpp
+	"SerialBroadcastSocket.h"
+	"shared/AndamBusExceptions.h"
+	"util.h"
+	<fcntl.h>
+	<termios.h>
+	<string.h>
+	<unistd.h>
+	<stdexcept>
+	<iostream>
+	<sys/ioctl.h>
+	<poll.h>
+	<linux/serial.h>
+	<chrono>
+
+1569931773 source:/home/ferec/ws/andamBus/LocalBroadcastSocket.cpp
+	"LocalBroadcastSocket.h"
+	<sys/socket.h>
+	<netinet/in.h>
+	<string.h>
+	<sstream>
+
+1569931732 /home/ferec/ws/andamBus/LocalBroadcastSocket.h
+	"BroadcastSocket.h"
+
+1569932346 source:/home/ferec/ws/andamBus/broadcastServer.cpp
+	<sys/socket.h>
+	<netinet/in.h>
+	<string.h>
+	<sstream>
+
+1584265440 source:/home/ferec/ws/andamBus/testing/broadcastServer.cpp
+	<sys/socket.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<string.h>
+	<unistd.h>
+	<fcntl.h>
+	<iostream>
+	<sstream>
+	<chrono>
+	<thread>
+	<vector>
+	"broadcastServer.h"
+	"../util.h"
+
+1612021225 source:/home/ferec/ws/andamBus/testing/commTest.cpp
+	<iostream>
+	<chrono>
+	"shared/AndamBusExceptions.h"
+	"AndamBusMaster.h"
+	"AndamBusSlave.h"
+	"SerialBroadcastSocket.h"
+	"TestBroadcastSocket.h"
+	"LocalBroadcastSocket.h"
+	"thread"
+	<fcntl.h>
+	<unistd.h>
+
+1573481485 /home/ferec/ws/andamBus/testing/TestBroadcastSocket.h
+	"BroadcastSocket.h"
+	"shared/AndamBusTypes.h"
+
+1604177434 /home/ferec/ws/andamBus/testing/LocalBroadcastSocket.h
+	"BroadcastSocket.h"
+	<chrono>
+	<zlib.h>
+
+1612021237 source:/home/ferec/ws/andamBus/testing/LocalBroadcastSocket.cpp
+	"LocalBroadcastSocket.h"
+	"broadcastServer.h"
+	"shared/AndamBusExceptions.h"
+	"util.h"
+	<sys/socket.h>
+	<netinet/in.h>
+	<unistd.h>
+	<fcntl.h>
+	<poll.h>
+	<string.h>
+	<sstream>
+	<thread>
+
+1572001756 source:/home/ferec/ws/andamBus/testing/TestBroadcastSocket.cpp
+	"TestBroadcastSocket.h"
+	<iostream>
+	<arpa/inet.h>
+	<string.h>
+	<zlib.h>
+	"shared/AndamBusExceptions.h"
+	"shared/AndamUtils.h"
+	"domain/SlaveVirtualPort.h"
+	"domain/SlaveVirtualDevice.h"
+
+1605352029 source:/home/ferec/ws/andamBus/domain/SlaveSecondaryBus.cpp
+	"SlaveSecondaryBus.h"
+
+1602183302 /home/ferec/ws/andamBus/domain/SlaveSecondaryBus.h
+	<stdint.h>
+	<vector>
+	"shared/AndamBusTypes.h"
+	"PropertyContainer.h"
+
+1612021116 source:/home/ferec/ws/andamBus/domain/SlaveVirtualDevice.cpp
+	"AndamBusSlave.h"
+	"SlaveVirtualDevice.h"
+	"shared/AndamBusExceptions.h"
+	"util.h"
+
+1612021812 /home/ferec/ws/andamBus/domain/SlaveVirtualDevice.h
+	<inttypes.h>
+	<string>
+	"shared/AndamBusTypes.h"
+	"SlaveSecondaryBus.h"
+	"PropertyContainer.h"
+
+1606385015 source:/home/ferec/ws/andamBus/domain/SlaveVirtualPort.cpp
+	"SlaveVirtualPort.h"
+	"SlaveVirtualDevice.h"
+	<iostream>
+
+1612021278 /home/ferec/ws/andamBus/domain/SlaveVirtualPort.h
+	<inttypes.h>
+	<string>
+	"../shared/AndamBusTypes.h"
+	"PropertyContainer.h"
+
+1612021283 /home/ferec/ws/andamBus/domain/PropertyContainer.h
+	"../shared/AndamBusTypes.h"
+	<map>
+	<string>
+
+1606291810 source:/home/ferec/ws/andamBus/domain/PropertyContainer.cpp
+	"PropertyContainer.h"
+	"shared/AndamBusExceptions.h"
+
+1569944181 /home/ferec/ws/andamBus/testing/broadcastServer.h
+
+1612021374 source:/home/ferec/ws/andamBus/AndamBusUnit.cpp
+	"AndamBusUnit.h"
+	"util.h"
+
+1606138177 /home/ferec/ws/andamBus/AndamBusUnit.h
+	"BroadcastSocket.h"
+	<inttypes.h>
+
+1597522195 source:/home/ferec/ws/andamBus/testing/unit.cpp
+	<iostream>
+	<sstream>
+	<thread>
+	"shared/AndamBusExceptions.h"
+	"util.h"
+	"broadcastServer.h"
+	"LocalBroadcastSocket.h"
+	"TestAndamBusUnit.h"
+
+1612021385 source:/home/ferec/ws/andamBus/testing/TestAndamBusUnit.cpp
+	"TestAndamBusUnit.h"
+	"util.h"
+	<zlib.h>
+
+1606138299 /home/ferec/ws/andamBus/testing/TestAndamBusUnit.h
+	"AndamBusUnit.h"
+	"TestItem.h"
+	<vector>
+
+1573136713 /home/ferec/ws/andamBus/shared/BroadcastSocket.h
+	<inttypes.h>
+	<chrono>
+	"AndamBusTypes.h"
+
+1606638713 /home/ferec/ws/andamBus/shared/AndamBusTypes.h
+	<inttypes.h>
+
+1572539261 /home/ferec/ws/andamBus/shared/AndamUtils.h
+	"AndamBusTypes.h"
+	"AndamBusExceptions.h"
+	<string>
+	"arduino/ArduinoLogger.h"
+	<sstream>
+	<netinet/in.h>
+
+1576003299 /home/ferec/ws/andamBus/shared/AndamBusExceptions.h
+	<string>
+	"AndamBusTypes.h"
+
+1573386738 source:/home/ferec/ws/andamBus/shared/AndamUtils.cpp
+	"AndamUtils.h"
+	"AndamBusStrings.h"
+	<chrono>
+	<iostream>
+
+1573136690 source:/home/ferec/ws/andamBus/shared/BroadcastSocket.cpp
+	"BroadcastSocket.h"
+	"AndamBusExceptions.h"
+	"AndamUtils.h"
+	<zlib.h>
+	<thread>
+
+1572774447 source:/home/ferec/ws/andamBus/arduino/AndamBusUnit.cpp
+	"AndamBusUnit.h"
+	"shared/AndamBusExceptions.h"
+	"shared/AndamUtils.h"
+	<cstring>
+
+1572774423 /home/ferec/ws/andamBus/arduino/AndamBusUnit.h
+	"../shared/BroadcastSocket.h"
+
+1570131385 /home/ferec/ws/andamBus/arduino/ArduinoLogger.h
+
+1581280350 source:/home/ferec/ws/andamBus/testing/monitor.cpp
+	<iostream>
+	<thread>
+	"../SerialBroadcastSocket.h"
+	"util.h"
+	"../shared/AndamBusExceptions.h"
+	"LocalBroadcastSocket.h"
+
+1573481345 source:/home/ferec/ws/andamBus/shared/AndamBusExceptions.cpp
+	"AndamBusExceptions.h"
+	"util.h"
+
+1606638759 /home/ferec/ws/andamBus/shared/AndamBusStrings.h
+
+1573196193 source:/home/ferec/ws/andamBus/arduino/SlaveCapability.cpp
+	"SlaveCapability.h"
+
+1573196202 /home/ferec/ws/andamBus/arduino/SlaveCapability.h
+	"shared/AndamBusTypes.h"
+
+1612021394 source:/home/ferec/ws/andamBus/testing/TestItem.cpp
+	"TestItem.h"
+	"util.h"
+
+1595705971 /home/ferec/ws/andamBus/testing/TestItem.h
+	<inttypes.h>
+
+1612020934 /home/ferec/ws/andamBus/util.h
+	"shared/AndamBusTypes.h"
+	"shared/AndamBusExceptions.h"
+	"ChangeListener.h"
+	<string>
+	<cstring>
+	<vector>
+	<map>
+	"arduino/ArduinoLogger.h"
+	<sstream>
+	<netinet/in.h>
+
+1612021246 source:/home/ferec/ws/andamBus/util.cpp
+	"util.h"
+	"shared/AndamBusStrings.h"
+	<chrono>
+	<iostream>
+	<fcntl.h>
+	<unistd.h>
+	<stdexcept>
+
+1606312566 source:/home/ferec/ws/andamBus/abc.cpp
+	<iostream>
+	<string>
+	<unistd.h>
+	<fstream>
+	"SerialBroadcastSocket.h"
+	"testing/LocalBroadcastSocket.h"
+	"AndamBusMaster.h"
+	"AndamBusSlave.h"
+
+1605516967 source:/home/ferec/ws/andamBus/testing/qtest.cpp
+	"AndamBusMaster.h"
+	"SerialBroadcastSocket.h"
+	"testing/LocalBroadcastSocket.h"
+	<curses.h>
+	<string.h>
+	<thread>
+	<chrono>
+	<iostream>
+	<fcntl.h>
+
+1581184576 source:/home/ferec/ws/andamBus/UnitBroadcastSocket.cpp
+	"UnitBroadcastSocket.h"
+	"util.h"
+	<zlib.h>
+
+1581184395 /home/ferec/ws/andamBus/UnitBroadcastSocket.h
+	<inttypes.h>
+	<chrono>
+	"shared/AndamBusTypes.h"
+
+1581186999 source:/home/ferec/ws/andamBus/arduino/HardwareSerial.cpp
+	"HardwareSerial.h"
+
+1581188970 /home/ferec/ws/andamBus/arduino/HardwareSerial.h
+
+1581187988 source:/home/ferec/ws/andamBus/arduino/Arduino.cpp
+	"Arduino.h"
+
+1581187960 /home/ferec/ws/andamBus/arduino/Arduino.h
+
+1581189519 source:/home/ferec/ws/andamBus/arduino/ArduinoSocket.cpp
+	"ArduinoSocket.h"
+	<CRC32.h>
+	<zlib.h>
+	"util.h"
+
+1581190098 /home/ferec/ws/andamBus/arduino/ArduinoSocket.h
+	"Arduino.h"
+	"AndamBusTypes.h"
+	"HardwareSerial.h"
+	"shared/AndamBusTypes.h"
+	<inttypes.h>
+
+1612021526 source:/home/ferec/ws/andamBus/icontrolDriver.cpp
+	"icontrolDriver.h"
+	"SerialBroadcastSocket.h"
+	"AndamBusSlave.h"
+	<vector>
+	<algorithm>
+	<cassert>
+
+1612020881 /home/ferec/ws/andamBus/icontrolDriver.h
+	"../iControl/include/driver.h"
+	"AndamBusMaster.h"
+	"ChangeListener.h"
+
+1557694354 /home/ferec/ws/iControl/include/driver.h
+	"plugin.h"
+	<sstream>
+
+1557694354 /home/ferec/ws/iControl/include/plugin.h
+	<vector>
+	<string>
+	<linux/i2c-dev.h>
+	"DeviceEnums.h"
+	"PortEnums.h"
+	"Logger.h"
+	"I2CService.h"
+	"config_constants.h"
+	<stdint.h>
+
+1557694354 /home/ferec/ws/iControl/include/DeviceEnums.h
+
+1557694354 /home/ferec/ws/iControl/include/PortEnums.h
+
+1601814289 /home/ferec/ws/iControl/include/Logger.h
+	<syslog.h>
+	<sstream>
+	<typeinfo>
+	<iostream>
+	<string>
+	<sys/time.h>
+	<stdio.h>
+	<map>
+
+1557694354 /home/ferec/ws/iControl/include/I2CService.h
+	"Driver.h"
+	"Singleton.h"
+	<inttypes.h>
+	<linux/i2c-dev.h>
+	<mutex>
+
+1557694354 /home/ferec/ws/iControl/include/Driver.h
+	"NamedItem.h"
+	"ConfigItem.h"
+	"Device.h"
+	"PortConnection.h"
+	<map>
+	<mutex>
+	<fstream>
+
+1557694354 /home/ferec/ws/iControl/include/NamedItem.h
+	<string>
+	<vector>
+	<mutex>
+	"ConfigItem.h"
+	"InvalidCharacterException.h"
+	"MsgException.h"
+
+1557694354 /home/ferec/ws/iControl/include/ConfigItem.h
+	<string>
+	<mutex>
+
+1557694354 /home/ferec/ws/iControl/include/InvalidCharacterException.h
+	"MsgException.h"
+	<string>
+	<exception>
+
+1557694354 /home/ferec/ws/iControl/include/MsgException.h
+	<exception>
+	<string>
+
+1557694354 /home/ferec/ws/iControl/include/Device.h
+	<vector>
+	<mutex>
+	"NamedItem.h"
+	"PortConnection.h"
+	"Port.h"
+	"UniquenessException.h"
+	"InvalidCharacterException.h"
+	"DeviceEnums.h"
+
+1557694354 /home/ferec/ws/iControl/include/PortConnection.h
+	<string>
+
+1602924622 /home/ferec/ws/iControl/include/Port.h
+	"PortEnums.h"
+	"NamedItem.h"
+	"FollowableChange.h"
+	"PortConnection.h"
+	"MsgException.h"
+	"UniquenessException.h"
+	<vector>
+	<atomic>
+	<mutex>
+	<sys/time.h>
+
+1557694354 /home/ferec/ws/iControl/include/FollowableChange.h
+	"NamedItem.h"
+	<string>
+
+1557694354 /home/ferec/ws/iControl/include/UniquenessException.h
+	"MsgException.h"
+	<exception>
+
+1557694354 /home/ferec/ws/iControl/include/Singleton.h
+
+1557694354 /home/ferec/ws/iControl/include/config_constants.h
+
+1610106762 /home/ferec/ws/andamBus/ChangeListener.h
+	"domain/SlaveVirtualPort.h"
+
+1612022164 source:/home/ferec/ws/andamBus/drvTest.cpp
+	"icontrolDriver.h"
+

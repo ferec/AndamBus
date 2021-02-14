@@ -1,0 +1,146 @@
+# depslib dependency file v1.0
+1557947846 source:/home/ferec/ws/rs485/main.cpp
+	<iostream>
+	<fcntl.h>
+	<termios.h>
+	<string.h>
+	<unistd.h>
+
+1564383907 source:/home/ferec/ws/rs485/commTest.cpp
+	<iostream>
+	"AndamBusExceptions.h"
+	"AndamBusTypes.h"
+	"AndamBusMaster.h"
+	"AndamBusSlave.h"
+	"TestBroadcastSocket.h"
+	<fcntl.h>
+	<unistd.h>
+
+1561274238 /home/ferec/ws/rs485/AndamBus.h
+
+1564349704 /home/ferec/ws/rs485/AndamBusExceptions.h
+	<stdexcept>
+	<sstream>
+	"AndamBusTypes.h"
+
+1564349704 /home/ferec/ws/rs485/AndamBusTypes.h
+	<inttypes.h>
+
+1564383929 source:/home/ferec/ws/rs485/AndamBusMaster.cpp
+	"AndamBusMaster.h"
+	"AndamBusSlave.h"
+	"AndamBusExceptions.h"
+	"AndamUtils.h"
+	<iostream>
+	<chrono>
+	<thread>
+	<arpa/inet.h>
+	<zlib.h>
+
+1564349704 /home/ferec/ws/rs485/AndamBusMaster.h
+	<string>
+	<vector>
+	"BroadcastSocket.h"
+	"AndamBusTypes.h"
+	"SlaveVirtualDevice.h"
+
+1564349704 /home/ferec/ws/rs485/BroadcastSocket.h
+	<string>
+
+1564349704 source:/home/ferec/ws/rs485/BroadcastSocket.cpp
+	"BroadcastSocket.h"
+	"AndamBusExceptions.h"
+	<fcntl.h>
+	<termios.h>
+	<string.h>
+	<unistd.h>
+	<stdexcept>
+	<iostream>
+	<sys/ioctl.h>
+	<chrono>
+
+1564349704 source:/home/ferec/ws/rs485/AndamBusSlave.cpp
+	"AndamBusSlave.h"
+	"SlaveVirtualDevice.h"
+	"AndamBusExceptions.h"
+	<arpa/inet.h>
+
+1564349704 /home/ferec/ws/rs485/AndamBusSlave.h
+	<inttypes.h>
+	<iostream>
+	<vector>
+	"AndamBusMaster.h"
+	"SlaveVirtualPort.h"
+	"SlaveVirtualDevice.h"
+	"SlaveSecondaryBus.h"
+	"PropertyContainer.h"
+
+1564383806 source:/home/ferec/ws/rs485/TestBroadcastSocket.cpp
+	"TestBroadcastSocket.h"
+	<iostream>
+	<arpa/inet.h>
+	<string.h>
+	<zlib.h>
+	"AndamBusExceptions.h"
+	"SlaveVirtualPort.h"
+	"SlaveVirtualDevice.h"
+	"AndamUtils.h"
+
+1564349704 /home/ferec/ws/rs485/TestBroadcastSocket.h
+	"BroadcastSocket.h"
+	"AndamBusTypes.h"
+
+1564383760 /home/ferec/ws/rs485/SlaveVirtualPort.h
+	<inttypes.h>
+	<string>
+	"AndamBusTypes.h"
+	"PropertyContainer.h"
+
+1564349704 source:/home/ferec/ws/rs485/SlaveVirtualPort.cpp
+	"SlaveVirtualPort.h"
+	<iostream>
+
+1562011817 /home/ferec/ws/rs485/SecondaryBus.h
+
+1564383732 /home/ferec/ws/rs485/SlaveSecondaryBus.h
+	<stdint.h>
+	<vector>
+	"AndamBusTypes.h"
+	"PropertyContainer.h"
+
+1564349704 source:/home/ferec/ws/rs485/SlaveSecondaryBus.cpp
+	"SlaveSecondaryBus.h"
+
+1564383746 /home/ferec/ws/rs485/SlaveVirtualDevice.h
+	<inttypes.h>
+	<string>
+	"AndamBusTypes.h"
+	"SlaveSecondaryBus.h"
+	"PropertyContainer.h"
+
+1564349704 source:/home/ferec/ws/rs485/SlaveVirtualDevice.cpp
+	"SlaveVirtualDevice.h"
+
+1564349704 /home/ferec/ws/rs485/PropertyContainer.h
+	"AndamBusTypes.h"
+	<map>
+	<string>
+
+1564349704 source:/home/ferec/ws/rs485/PropertyContainer.cpp
+	"PropertyContainer.h"
+	"AndamBusExceptions.h"
+
+1563865604 source:/home/ferec/ws/rs485/src/AndamUtils.cpp
+	"AndamUtils.h"
+	<arpa/inet.h>
+
+1563865526 /home/ferec/ws/rs485/include/AndamUtils.h
+	"AndamBusTypes.h"
+
+1564349704 /home/ferec/ws/rs485/AndamUtils.h
+	"AndamBusTypes.h"
+
+1564349704 source:/home/ferec/ws/rs485/AndamUtils.cpp
+	"AndamUtils.h"
+	<arpa/inet.h>
+
