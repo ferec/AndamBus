@@ -9,7 +9,7 @@
 using namespace std;
 
 AndamBusSlave::AndamBusSlave(AndamBusMaster &master, uint16_t addr, SlaveHwType _hwType, uint32_t _swVersion, uint16_t _apiVersion):
-        address(addr),master(master),hwType(_hwType),swVersion(_swVersion),apiVersion(_apiVersion),counter(0),ordinal(0),chgLst(nullptr)
+        address(addr),master(master),hwType(_hwType),swVersion(_swVersion),apiVersion(_apiVersion),counter(0),ordinal(0),cntErr(0),chgLst(nullptr)
 {
     //ctor
 }
@@ -41,12 +41,15 @@ void AndamBusSlave::updatePortValues(size_t cnt, ItemValue *ivals) {
 
         if (p!=nullptr) {
             int32_t oldValue = p->value;
+            int8_t oldAge = p->age;
 
             p->value = ivals[i].value;
             p->age = ivals[i].age;
 
-            if (chgLst!=nullptr && oldValue != p->value) {
+            if (chgLst!=nullptr && oldValue != p->value)
                 chgLst->valueChanged(this, p, oldValue);
+            if (chgLst!=nullptr && oldAge != p->age) {
+                chgLst->metadataChanged(this, p->getDevice(), MetadataType::TRY_COUNT, 0, p->age);
             }
         }
 
@@ -164,15 +167,30 @@ void AndamBusSlave::updateVirtualDevices(size_t cnt, VirtualDevice *sb) {
 void AndamBusSlave::updateMetadata(size_t cnt, UnitMetadata *metadata) {
     for(unsigned int i=0;i<cnt;i++) {
         UnitMetadata &md = metadata[i];
-        auto itype = static_cast<uint16_t>(md.type);
 
-        if (itype >= 0x10 && itype < 0x20) {
-            AB_INFO("Updating " << metadataTypeString(md.type) << "(" << md.propertyId << ") =\t" << bitset<32>(md.value));
-        }
-        else {
-            AB_INFO("Updating " << metadataTypeString(md.type) << "(" << md.propertyId << ") = " << md.value);
-        }
+        updateMetadata(md.type, md.propertyId, md.value);
+        /*if (chgLst!=nullptr) {
+            chgLst->metadataChanged(this, nullptr, md.type, md.propertyId, md.value);
+        }*/
+
     }
+}
+
+void AndamBusSlave::updateMetadata(MetadataType tp, uint16_t propId, uint32_t value) {
+    if (chgLst!=nullptr) {
+        chgLst->metadataChanged(this, nullptr, tp, propId, value);
+    }
+}
+
+void AndamBusSlave::resetErrorCounter() {
+    if (cntErr>0) {
+        cntErr=0;
+        updateMetadata(MetadataType::TRY_COUNT, 0, 0);
+    }
+}
+
+void AndamBusSlave::incrementErrorCounter() {
+    updateMetadata(MetadataType::TRY_COUNT, 0, ++cntErr);
 }
 
 PropertyContainer* AndamBusSlave::getPropertyContainer(uint8_t id) {
@@ -323,7 +341,7 @@ void AndamBusSlave::refreshMetadata() {
 void AndamBusSlave::refreshPortValues(bool full) {
     AB_DEBUG("refreshPortValues");
 
-    master.refreshSlavePortValues(this, full);
+        master.refreshSlavePortValues(this, full);
 }
 
 void AndamBusSlave::refreshVirtualItems() {
@@ -671,4 +689,12 @@ set<uint8_t> AndamBusSlave::getUnusedPins() {
     }
 
     return up;
+}
+
+uint16_t AndamBusSlave::getApiVersion() {
+    return apiVersion;
+}
+
+uint32_t AndamBusSlave::getSWVersion() {
+    return swVersion;
 }

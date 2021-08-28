@@ -86,12 +86,21 @@ class AndamBusSlave : public PropertyContainer
         std::string getApiVersionString();
         std::string getSWVersionString();
         SlaveHwType getHwType() { return hwType; }
+        uint16_t getApiVersion();
+        uint32_t getSWVersion();
+
+
+
 
         std::vector<SlaveVirtualPort*>& getPorts() {return ports; }
         std::vector<SlaveSecondaryBus*>& getBuses() {return buses; }
         std::vector<SlaveVirtualDevice*>& getDevices() {return devs; }
 
         void setChangeListener(ChangeListener *lst);
+
+        void resetErrorCounter();
+        void incrementErrorCounter();
+
     protected:
 
         void removeBusFromList(uint8_t busId);
@@ -101,6 +110,7 @@ class AndamBusSlave : public PropertyContainer
         void removeDevicePorts(uint8_t devId);
 
         void updateMetadata(size_t cnt, UnitMetadata *metadata);
+        void updateMetadata(MetadataType tp, uint16_t propId, uint32_t value);
         void updatePorts(size_t cnt, VirtualPort *ports);
         void updatePortValues(size_t cnt, ItemValue *ivals);
         void updateVirtualDevices(size_t cnt, VirtualDevice *sb);
@@ -120,6 +130,7 @@ class AndamBusSlave : public PropertyContainer
         const uint32_t swVersion;
         const uint16_t apiVersion;
         uint16_t counter, ordinal;
+        uint16_t cntErr;
 
         ChangeListener *chgLst;
 };

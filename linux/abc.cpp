@@ -4,6 +4,7 @@
 /*#include <fcntl.h>
 #include <unistd.h>*/
 #include <fstream>
+#include <bitset>
 
 #include "SerialBroadcastSocket.h"
 #include "testing/LocalBroadcastSocket.h"
@@ -26,6 +27,17 @@ void ChangeListener::valueChanged(AndamBusSlave *slave, SlaveVirtualPort *port, 
 
 void ChangeListener::idChanged(AndamBusSlave *slave, ChangeListener::ItemType type, uint8_t oldId, uint8_t newId) {
     cout << dec << itemTypeString(type) << " ID changed on unit " << slave->getAddress() << " from " << (int)oldId << " to " << (int)newId << endl;
+}
+
+void ChangeListener::metadataChanged(AndamBusSlave *unit, SlaveVirtualDevice *dev, MetadataType type, uint16_t propertyId, int32_t value) {
+    auto itype = static_cast<uint16_t>(type);
+
+    if (itype >= 0x10 && itype < 0x20) {
+        AB_INFO("Updating " << metadataTypeString(type) << "(" << propertyId << ") =\t" << bitset<32>(value));
+    }
+    else {
+        AB_INFO("Updating " << metadataTypeString(type) << "(" << propertyId << ") = " << value);
+    }
 }
 
 void printDeviceTypes() {

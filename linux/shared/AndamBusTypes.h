@@ -108,6 +108,7 @@ ERROR = 0x65 // error during command execution
 };
 
 enum class AndamBusPropertyType:uint16_t {
+    NONE = 0,
     PORT_TYPE = 0x01, // type of the virtual port with values
     PORT_VALUE = 0x02, // value of the port (analog 32bit integer)
     DEVICE_TYPE = 0x03, // type of the virtual device
@@ -134,6 +135,8 @@ enum class MetadataType:uint16_t {
     DIGITAL_OUTPUT_PORTS = 0x12, // bitmask for pins that can be set as digital output
     ANALOG_OUTPUT_PORTS = 0x13, // bitmask for pins that can be set as analog output, including PWM
 
+    TRY_COUNT = 0x30, // device refresh try count
+
     // telemetry
     FREE_MEMORY = 0x60, // returns number of free bytes on unit
     UPTIME = 0x61,     // returns uptime in seconds
@@ -154,7 +157,7 @@ struct UnitMetadata {
 
 struct ItemProperty {
     AndamBusPropertyType type; // 2 bytes
-    uint8_t entityId;   // ID of the entity: SecodaryBusId/VirtualDeviceID/VirutalPortId
+    uint8_t entityId;   // ID of the entity: SecodaryBusId/VirtualDeviceID/VirtualPortId
     uint8_t propertyId; // type of custom property
     union {
         VirtualPortType portType; // 1 byte

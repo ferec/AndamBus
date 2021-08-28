@@ -153,8 +153,12 @@ bool SerialBroadcastSocket::receive(uint32_t bytes, unsigned char *buffer, unsig
 
         pos+=ret;
 
-        if (iter++ > 10)
+        if (iter++ > 50) {
             AB_WARNING("receive iterations high iter=" << iter << "; timeoutMs=" << timeoutMs << " ret=" << ret << " pos=" << pos << " diff=" << (chrono::system_clock::now()-start >= chrono::milliseconds(timeoutMs)));
+        }
+        if (iter++ > 500) {
+            throw BusTimeoutException("Too much read iterations");
+        }
     }
 
     hexdump((char*)buffer, bytes);

@@ -147,9 +147,18 @@ void AndamBusMaster::refreshSlavePortValues(AndamBusSlave *slave, bool full) {
     AndamBusFrameResponse &resp = reinterpret_cast<AndamBusFrameResponse&>(buffer);
     AndamBusFrameHeader hdr;
 
-    sendCommandWithResponse(cmd, slave->getAddress(), resp, hdr);
-    AB_INFO("refreshed slave port values " << slave->getAddress() << " item count:" << (int)resp.typeOkData.itemCount);
-    slave->updatePortValues(resp.typeOkData.itemCount, resp.typeOkData.responseData.portValues);
+    try {
+        sendCommandWithResponse(cmd, slave->getAddress(), resp, hdr);
+        AB_INFO("refreshed slave " << slave->getAddress() << " port values item count:" << (int)resp.typeOkData.itemCount);
+        slave->updatePortValues(resp.typeOkData.itemCount, resp.typeOkData.responseData.portValues);
+
+        slave->resetErrorCounter();
+    } catch (ExceptionBase &e) {
+        slave->incrementErrorCounter();
+
+        throw e;
+    }
+
 }
 
 void AndamBusMaster::detectSlaves() {
@@ -541,9 +550,9 @@ size_t AndamBusMaster::calculateFrameSize(AndamBusCommand cmd, uint8_t propCount
 void AndamBusMaster::sendCommandWithResponse(AndamBusFrameCommand &cmd, uint16_t addr, AndamBusFrameResponse &resp, AndamBusFrameHeader &hdr) {
     auto start = chrono::system_clock::now();
 
-    AB_INFO("before mutex");
+//    AB_INFO("before mutex");
     lock_guard<mutex> lg(mtTxn);
-    AB_INFO("after mutex");
+//    AB_INFO("after mutex");
 
 //    try {
         AndamBusFrame frm = {};
@@ -558,17 +567,17 @@ void AndamBusMaster::sendCommandWithResponse(AndamBusFrameCommand &cmd, uint16_t
         if (slave != nullptr)
             counter = slave->getNextCounter();
 
-        AB_INFO("before send frame");
+  //      AB_INFO("before send frame");
         bsock.sendFrame(frm, size, addr, counter);
-        AB_INFO("after send frame");
+  //      AB_INFO("after send frame");
         cntSent++;
 
         char rbuf[ANDAMBUS_BUFFER_SIZE+100];
         AndamBusFrame &rfrm = *(AndamBusFrame*)rbuf;
 
-        AB_INFO("before getresponse");
+    //    AB_INFO("before getresponse");
         getResponse(cmd.command, rfrm);
-        AB_INFO("after getresponse");
+   //     AB_INFO("after getresponse");
 
         auto dur = chrono::system_clock::now()-start;
         AB_DEBUG("command duration " << chrono::duration_cast<chrono::milliseconds>(dur).count() << "ms");
@@ -584,14 +593,14 @@ void AndamBusMaster::sendCommandWithResponse(AndamBusFrameCommand &cmd, uint16_t
         ntohResp(resp);
 
         hdr = rfrm.header;
-    AB_INFO("end cmd response");
+//    AB_INFO("end cmd response");
 }
 
 void AndamBusMaster::getResponse(AndamBusCommand cmd, AndamBusFrame &resp) {
     AB_DEBUG("getResponse");
     try {
         bsock.receiveFrame(resp, 0, ANDAMBUS_BUFFER_SIZE);
-        AB_INFO("frameReceived " << resp.header.payloadLength);
+  //      AB_INFO("frameReceived " << resp.header.payloadLength);
 
         cntReceived++;
 

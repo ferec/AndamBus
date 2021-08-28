@@ -30,6 +30,8 @@
 #define DRIVER_VERSION 1
 #define SERIAL_DEV_FILENAME "/dev/ttyUSB0"
 
+#define ANDAMBUS_PROPERTY_PREFIX "ext:ab:"
+
 #include "ChangeListener.h"
 
 class ValueChgListener:public ChangeListener {
@@ -41,6 +43,9 @@ int dev2devId(uint8_t unitId, SlaveVirtualDevice *dev);
 int port2Id(uint8_t unitId, SlaveVirtualPort *port);
 int port2portId(uint8_t unitId, SlaveVirtualPort *port);
 int ordinal2portId(uint8_t ordinal);
+bool convertMetadataType(MetadataType type, DeviceMetadataType &dtype, int value, int &dvalue);
+DeviceClass abusDevType2DevCls(VirtualDeviceType tp);
+
 
 const std::string devType2IconCode(VirtualDeviceType type);
 SlaveVirtualDevice* devId2dev(int devId);
@@ -53,6 +58,10 @@ bool devIdIsBusDevice(int devId);
 //uint64_t dev2longaddr(SlaveVirtualDevice *vdev);
 int longaddr2devId(uint8_t unitID, uint64_t longaddr);
 uint64_t toSimpleW1Addr(uint64_t addr);
+
+std::string AndambusPropertyType2ConfigName(AndamBusPropertyType tp, uint8_t propId);
+void ConfigName2AndambusPropertyType(AndamBusPropertyType &tp, uint8_t &propId, std::string configName);
+
 
 /*
 int pin2id(uint8_t unitID, uint8_t pin);

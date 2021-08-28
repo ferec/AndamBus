@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1612021011 source:/home/ferec/ws/andamBus/AndamBusMaster.cpp
+1618224448 source:/home/ferec/ws/andamBus/AndamBusMaster.cpp
 	"AndamBusMaster.h"
 	"AndamBusSlave.h"
 	"AndamBusUnit.h"
@@ -12,7 +12,7 @@
 	<zlib.h>
 	<string.h>
 
-1610105364 /home/ferec/ws/andamBus/AndamBusMaster.h
+1618224207 /home/ferec/ws/andamBus/AndamBusMaster.h
 	<string>
 	<vector>
 	<mutex>
@@ -47,7 +47,7 @@
 	<map>
 	<string>
 
-1610105131 /home/ferec/ws/andamBus/AndamBusSlave.h
+1622111940 /home/ferec/ws/andamBus/AndamBusSlave.h
 	<inttypes.h>
 	<iostream>
 	<vector>
@@ -76,7 +76,7 @@
 	<sstream>
 	<netinet/in.h>
 
-1612021094 source:/home/ferec/ws/andamBus/AndamBusSlave.cpp
+1618224471 source:/home/ferec/ws/andamBus/AndamBusSlave.cpp
 	"AndamBusSlave.h"
 	"domain/SlaveVirtualDevice.h"
 	"shared/AndamBusExceptions.h"
@@ -87,7 +87,7 @@
 	"AndamUtils.h"
 	<iostream>
 
-1612021181 source:/home/ferec/ws/andamBus/BroadcastSocket.cpp
+1613496554 source:/home/ferec/ws/andamBus/BroadcastSocket.cpp
 	"BroadcastSocket.h"
 	"shared/AndamBusExceptions.h"
 	"util.h"
@@ -145,7 +145,7 @@
 	<string>
 	<chrono>
 
-1612021169 source:/home/ferec/ws/andamBus/SerialBroadcastSocket.cpp
+1617369080 source:/home/ferec/ws/andamBus/SerialBroadcastSocket.cpp
 	"SerialBroadcastSocket.h"
 	"shared/AndamBusExceptions.h"
 	"util.h"
@@ -247,7 +247,7 @@
 	"shared/AndamBusTypes.h"
 	"PropertyContainer.h"
 
-1612021116 source:/home/ferec/ws/andamBus/domain/SlaveVirtualDevice.cpp
+1612021728 source:/home/ferec/ws/andamBus/domain/SlaveVirtualDevice.cpp
 	"AndamBusSlave.h"
 	"SlaveVirtualDevice.h"
 	"shared/AndamBusExceptions.h"
@@ -315,7 +315,7 @@
 	<chrono>
 	"AndamBusTypes.h"
 
-1606638713 /home/ferec/ws/andamBus/shared/AndamBusTypes.h
+1618601971 /home/ferec/ws/andamBus/shared/AndamBusTypes.h
 	<inttypes.h>
 
 1572539261 /home/ferec/ws/andamBus/shared/AndamUtils.h
@@ -393,7 +393,7 @@
 	<sstream>
 	<netinet/in.h>
 
-1612021246 source:/home/ferec/ws/andamBus/util.cpp
+1622111959 source:/home/ferec/ws/andamBus/util.cpp
 	"util.h"
 	"shared/AndamBusStrings.h"
 	<chrono>
@@ -402,11 +402,12 @@
 	<unistd.h>
 	<stdexcept>
 
-1606312566 source:/home/ferec/ws/andamBus/abc.cpp
+1617740181 source:/home/ferec/ws/andamBus/abc.cpp
 	<iostream>
 	<string>
 	<unistd.h>
 	<fstream>
+	<bitset>
 	"SerialBroadcastSocket.h"
 	"testing/LocalBroadcastSocket.h"
 	"AndamBusMaster.h"
@@ -456,7 +457,7 @@
 	"shared/AndamBusTypes.h"
 	<inttypes.h>
 
-1612021526 source:/home/ferec/ws/andamBus/icontrolDriver.cpp
+1622111981 source:/home/ferec/ws/andamBus/icontrolDriver.cpp
 	"icontrolDriver.h"
 	"SerialBroadcastSocket.h"
 	"AndamBusSlave.h"
@@ -464,7 +465,7 @@
 	<algorithm>
 	<cassert>
 
-1612020881 /home/ferec/ws/andamBus/icontrolDriver.h
+1618601566 /home/ferec/ws/andamBus/icontrolDriver.h
 	"../iControl/include/driver.h"
 	"AndamBusMaster.h"
 	"ChangeListener.h"
@@ -473,7 +474,7 @@
 	"plugin.h"
 	<sstream>
 
-1557694354 /home/ferec/ws/iControl/include/plugin.h
+1618568253 /home/ferec/ws/iControl/include/plugin.h
 	<vector>
 	<string>
 	<linux/i2c-dev.h>
@@ -484,7 +485,7 @@
 	"config_constants.h"
 	<stdint.h>
 
-1557694354 /home/ferec/ws/iControl/include/DeviceEnums.h
+1617915106 /home/ferec/ws/iControl/include/DeviceEnums.h
 
 1557694354 /home/ferec/ws/iControl/include/PortEnums.h
 
@@ -535,9 +536,10 @@
 	<exception>
 	<string>
 
-1557694354 /home/ferec/ws/iControl/include/Device.h
+1618568825 /home/ferec/ws/iControl/include/Device.h
 	<vector>
 	<mutex>
+	<map>
 	"NamedItem.h"
 	"PortConnection.h"
 	"Port.h"
@@ -560,7 +562,8 @@
 	<mutex>
 	<sys/time.h>
 
-1557694354 /home/ferec/ws/iControl/include/FollowableChange.h
+1617807284 /home/ferec/ws/iControl/include/FollowableChange.h
+	"DeviceEnums.h"
 	"NamedItem.h"
 	<string>
 
@@ -572,9 +575,9 @@
 
 1557694354 /home/ferec/ws/iControl/include/config_constants.h
 
-1610106762 /home/ferec/ws/andamBus/ChangeListener.h
+1617740066 /home/ferec/ws/andamBus/ChangeListener.h
 	"domain/SlaveVirtualPort.h"
 
-1612022164 source:/home/ferec/ws/andamBus/drvTest.cpp
+1617894458 source:/home/ferec/ws/andamBus/drvTest.cpp
 	"icontrolDriver.h"
 

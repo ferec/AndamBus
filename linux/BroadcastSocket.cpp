@@ -107,12 +107,12 @@ int BroadcastSocket::receiveFrame(AndamBusFrame &frm, uint16_t slaveAddress, uin
         frm.header.magicWord = syncNint;
         receive(sizeof(AndamBusFrameHeader)-sizeof(uint32_t), reinterpret_cast<unsigned char*>(&frm.header.payloadLength), ANDAMBUS_TIMEOUT_MS);
         syncIndex = 0;
-        AB_INFO("Received1");
+//        AB_INFO("Received1");
     }
     else {
         receive(sizeof(AndamBusFrameHeader), reinterpret_cast<unsigned char*>(&frm), ANDAMBUS_TIMEOUT_MS);
         startTimer();
-        AB_INFO("Received2");
+//        AB_INFO("Received2");
     }
 
     if(frm.header.magicWord != htonl(ANDAMBUS_MAGIC_WORD))
@@ -138,11 +138,11 @@ int BroadcastSocket::receiveFrame(AndamBusFrame &frm, uint16_t slaveAddress, uin
 
     receive(plen, reinterpret_cast<unsigned char*>(&frm.command), ANDAMBUS_TIMEOUT_MS);
 //    AB_DEBUG("Payload received " << frmCounter++);
-    AB_INFO("Received3");
+//    AB_INFO("Received3");
 
     receive(sizeof(uint32_t), reinterpret_cast<unsigned char*>(&crc), 200);
 //    crc=ntohl(crc);
-    AB_INFO("Received4");
+    //AB_INFO("Received4");
 
     uint32_t crcReceived = ntohl(crc);
 //    AB_ERROR("CRC received " << hex << crc);

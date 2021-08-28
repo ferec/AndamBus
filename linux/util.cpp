@@ -350,6 +350,7 @@ string propertyTypeString(AndamBusPropertyType type) {
         case AndamBusPropertyType::STEP:return "Step";
         case AndamBusPropertyType::PERIOD_MS:return "Period(ms)";
         case AndamBusPropertyType::HIGHLOGIC:return "Highlogic";
+        case AndamBusPropertyType::NONE:return "Unknown";
     }
     return std::to_string((int)type);
 }
@@ -361,6 +362,7 @@ string metadataTypeString(MetadataType type) {
         case MetadataType::DIGITAL_OUTPUT_PORTS:return "Digital output ports";
         case MetadataType::ANALOG_OUTPUT_PORTS:return "Analog output ports";
         case MetadataType::FREE_MEMORY:return "Free memory";
+        case MetadataType::TRY_COUNT:return "Try count";
 
         case MetadataType::UPTIME:return "Uptime";
         case MetadataType::TICK:return "Tick";
@@ -391,7 +393,7 @@ const char* int_to_string(int i) {
     return to_string(i).c_str();
 }
 
-std::string getThermostatPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getThermostatPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::ITEM_ID:
         return "Thermometer ID";
@@ -408,9 +410,9 @@ std::string getThermostatPropertyString(AndamBusPropertyType propType, uint8_t i
     default:
         return "";
     }
-}
+}*/
 
-std::string getPushDetectorPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getPushDetectorPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::ITEM_ID:
         switch(idx) {
@@ -424,9 +426,9 @@ std::string getPushDetectorPropertyString(AndamBusPropertyType propType, uint8_t
     default:
         return "";
     }
-}
+}*/
 
-std::string getBlindsControlPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getBlindsControlPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::PIN:
         switch(idx) {
@@ -449,9 +451,9 @@ std::string getBlindsControlPropertyString(AndamBusPropertyType propType, uint8_
     default:
         return "";
     }
-}
+}*/
 
-std::string getDiffThermostatPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getDiffThermostatPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::TEMPERATURE:
         switch(idx) {
@@ -475,9 +477,9 @@ std::string getDiffThermostatPropertyString(AndamBusPropertyType propType, uint8
     default:
         return "";
     }
-}
+}*/
 
-std::string getSolarThermostatPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getSolarThermostatPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::TEMPERATURE:
         if (idx == 3)
@@ -499,39 +501,17 @@ std::string getSolarThermostatPropertyString(AndamBusPropertyType propType, uint
         break;
     }
     return getDiffThermostatPropertyString(propType, idx);
-}
+}*/
 
-std::string getCircPumpPropertyString(AndamBusPropertyType propType, uint8_t idx) {
-    switch(propType) {
-    case AndamBusPropertyType::TEMPERATURE:
-        switch(idx) {
-        case 0:
-            return "Limit temperature";
-        case 1:
-            return "High temp limit";
-        }
-    case AndamBusPropertyType::PERIOD_SEC:
-        switch(idx) {
-        case 0:
-            return "Seconds to run";
-        case 1:
-            return "Seconds idle";
-        case 2:
-            return "Seconds idle high temp";
-        case 3:
-            return "Noswitch period";
-        }
-    case AndamBusPropertyType::ITEM_ID:
-        switch(idx) {
-        case 0:
-            return "Thermometer";
-        }
-    default:
-        return "";
+/*std::string getCircPumpPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+    for(auto it=cfgNaming.begin();it!=cfgNaming.end();it++) {
+        if (it->name == propType && it->propertyId == idx)
+            return it->label;
     }
-}
 
-std::string getModifierPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+}*/
+
+/*std::string getModifierPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::ITEM_ID:
         switch(idx) {
@@ -546,9 +526,9 @@ std::string getModifierPropertyString(AndamBusPropertyType propType, uint8_t idx
     default:
         return "";
     }
-}
+}*/
 
-std::string getDisplayPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getDisplayPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::ITEM_ID:
         if (idx>=0 || idx <= 5)
@@ -561,9 +541,9 @@ std::string getDisplayPropertyString(AndamBusPropertyType propType, uint8_t idx)
     default:
         return "";
     }
-}
+}*/
 
-std::string getTimerPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getTimerPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::PERIOD_SEC:
         switch(idx) {
@@ -573,9 +553,9 @@ std::string getTimerPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     default:
         return "";
     }
-}
+}*/
 
-std::string getHvacPropertyString(AndamBusPropertyType propType, uint8_t idx) {
+/*std::string getHvacPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     switch(propType) {
     case AndamBusPropertyType::ITEM_ID:
         switch(idx) {
@@ -609,9 +589,95 @@ std::string getHvacPropertyString(AndamBusPropertyType propType, uint8_t idx) {
     default:
         return "";
     }
-}
+}*/
+
+
+struct CfgNaming {
+    VirtualDeviceType type;
+    AndamBusPropertyType name;
+    uint8_t propertyId;
+    string label;
+};
+
+vector<CfgNaming> cfgNaming = {
+	{ type: VirtualDeviceType::CIRC_PUMP, name: AndamBusPropertyType::TEMPERATURE, propertyId: 0, label:"Limit temperature" },
+	{ type: VirtualDeviceType::CIRC_PUMP, name: AndamBusPropertyType::TEMPERATURE, propertyId: 1, label:"High temp limit" },
+	{ type: VirtualDeviceType::CIRC_PUMP, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 0, label:"Seconds to run" },
+	{ type: VirtualDeviceType::CIRC_PUMP, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 1, label:"Seconds idle" },
+	{ type: VirtualDeviceType::CIRC_PUMP, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 2, label:"Seconds idle high temp" },
+	{ type: VirtualDeviceType::CIRC_PUMP, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 3, label:"Noswitch period" },
+
+	{ type: VirtualDeviceType::THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 0, label:"Initial temp" },
+	{ type: VirtualDeviceType::THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 1, label:"Hysteresis temp" },
+	{ type: VirtualDeviceType::THERMOSTAT, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"Thermometer ID" },
+	{ type: VirtualDeviceType::THERMOSTAT, name: AndamBusPropertyType::HIGHLOGIC, propertyId: 0, label:"0/1->1/0" },
+
+	{ type: VirtualDeviceType::BLINDS_CONTROL, name: AndamBusPropertyType::PIN, propertyId: 0, label:"Down button pin (IN)" },
+	{ type: VirtualDeviceType::BLINDS_CONTROL, name: AndamBusPropertyType::PIN, propertyId: 1, label:"Motor move pin (OUT)" },
+	{ type: VirtualDeviceType::BLINDS_CONTROL, name: AndamBusPropertyType::PIN, propertyId: 2, label:"Motor direction down pin (OUT)" },
+	{ type: VirtualDeviceType::BLINDS_CONTROL, name: AndamBusPropertyType::PIN, propertyId: 3, label:"Related device main pin" },
+	{ type: VirtualDeviceType::BLINDS_CONTROL, name: AndamBusPropertyType::PERIOD_MS, propertyId: 0, label:"Full up/down time in ms" },
+	{ type: VirtualDeviceType::BLINDS_CONTROL, name: AndamBusPropertyType::PERIOD_MS, propertyId: 1, label:"Full open/shade time in ms" },
+
+	{ type: VirtualDeviceType::DIFF_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 0, label:"Difference to turn on" },
+	{ type: VirtualDeviceType::DIFF_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 1, label:"Difference to turn off" },
+	{ type: VirtualDeviceType::DIFF_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 2, label:"Low thermometer temp limit" },
+	{ type: VirtualDeviceType::DIFF_THERMOSTAT, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"Thermometer high" },
+	{ type: VirtualDeviceType::DIFF_THERMOSTAT, name: AndamBusPropertyType::ITEM_ID, propertyId: 1, label:"Thermometer low" },
+	{ type: VirtualDeviceType::DIFF_THERMOSTAT, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 0, label:"Noswitch period in seconds" },
+
+
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 0, label:"Difference to turn on" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 1, label:"Difference to turn off" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 2, label:"Low thermometer temp limit" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::TEMPERATURE, propertyId: 3, label:"Tank switch limit temp" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 0, label:"Noswitch period in seconds" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 1, label:"Tank noswitch period" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::PIN, propertyId: 0, label:"Tank switch pin (OUT)" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"Thermometer high" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::ITEM_ID, propertyId: 1, label:"Thermometer low" },
+	{ type: VirtualDeviceType::SOLAR_THERMOSTAT, name: AndamBusPropertyType::ITEM_ID, propertyId: 2, label:"Thermometer secondary tank" },
+
+	{ type: VirtualDeviceType::MODIFIER, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"Target port ID" },
+	{ type: VirtualDeviceType::MODIFIER, name: AndamBusPropertyType::STEP, propertyId: 0, label:"Modify step" },
+
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"Thermometer 1-1" },
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::ITEM_ID, propertyId: 1, label:"Thermometer 1-2" },
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::ITEM_ID, propertyId: 2, label:"Thermometer 2-1" },
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::ITEM_ID, propertyId: 3, label:"Thermometer 2-2" },
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::ITEM_ID, propertyId: 4, label:"Thermometer 3-1" },
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::ITEM_ID, propertyId: 5, label:"Thermometer 3-2" },
+	{ type: VirtualDeviceType::I2C_DISPLAY, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 0, label:"Backlight period seconds" },
+
+	{ type: VirtualDeviceType::TIMER, name: AndamBusPropertyType::PERIOD_SEC, propertyId: 0, label:"Timer seconds" },
+
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"In thermometer" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::ITEM_ID, propertyId: 1, label:"Out thermometer" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::ITEM_ID, propertyId: 2, label:"Digital potmeter port" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::ITEM_ID, propertyId: 3, label:"Target temperature port" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::TEMPERATURE, propertyId: 0, label:"Target temperature" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::TEMPERATURE, propertyId: 1, label:"HP Target temperature" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::PIN, propertyId: 0, label:"On/Off (IN)" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::PIN, propertyId: 1, label:"Heat mode (IN)" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::PIN, propertyId: 2, label:"Ventilation request (IN)" },
+	{ type: VirtualDeviceType::HVAC, name: AndamBusPropertyType::PIN, propertyId: 3, label:"Ventilator (Out)" },
+
+	{ type: VirtualDeviceType::PUSH_DETECTOR, name: AndamBusPropertyType::ITEM_ID, propertyId: 0, label:"1-click port ID" },
+	{ type: VirtualDeviceType::PUSH_DETECTOR, name: AndamBusPropertyType::ITEM_ID, propertyId: 1, label:"2-click port ID" },
+	{ type: VirtualDeviceType::PUSH_DETECTOR, name: AndamBusPropertyType::ITEM_ID, propertyId: 2, label:"3-click port ID" },
+
+
+};
+
 
 std::string getDevicePropertyString(VirtualDeviceType devType, AndamBusPropertyType propType, uint8_t idx) {
+    for(auto it=cfgNaming.begin();it!=cfgNaming.end();it++) {
+        if (it->type == devType && it->name == propType && it->propertyId == idx)
+            return it->label;
+    }
+
+/*
+
     switch(devType) {
     case VirtualDeviceType::THERMOMETER: // no property needed
     case VirtualDeviceType::NONE:
@@ -637,7 +703,7 @@ std::string getDevicePropertyString(VirtualDeviceType devType, AndamBusPropertyT
         return getTimerPropertyString(propType, idx);
     case VirtualDeviceType::HVAC:
         return getHvacPropertyString(propType, idx);
-    }
+    }*/
     return "";
 }
 
@@ -721,7 +787,7 @@ void printFrame(AndamBusFrame &frm) {
 
 static fnLog logger = defaultLogger;
 
-LogLevel logLevel = LogLevel::INFO;
+LogLevel logLevel = LogLevel::WARNING;
 
 void setLogLevel(LogLevel lvl) {
     logLevel = lvl;

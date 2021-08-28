@@ -16,6 +16,7 @@ using namespace std;
 //void* _driverBase = NULL;
 
 AndamBusMaster *abm=nullptr;
+uint32_t refreshCounter=0;
 
 vector<uint64_t> w1addrs;
 
@@ -25,35 +26,86 @@ void ChangeListener::idChanged(AndamBusSlave *slave, ItemType type, uint8_t oldI
     INFO("id changed " << (int)oldId << " -> " << (int)newId);
 }
 
-void ChangeListener::valueChanged(AndamBusSlave *slave, SlaveVirtualPort *port, int32_t oldValue) {
-    if (slave == nullptr || port == nullptr)
+void ChangeListener::metadataChanged(AndamBusSlave *unit, SlaveVirtualDevice *dev, MetadataType type, uint16_t propertyId, int32_t value) {
+    if (unit == nullptr)
+        return;
+//    INFO("metadataChanged " << (int)type << " to " << value);
+
+    DeviceMetadataType dtype;
+    int dvalue;
+    bool relevant = convertMetadataType(type, dtype, value, dvalue);
+
+    if (_metadataCallback == nullptr) {
+        WARNING("Metadata callback not set");
+        return;
+    }
+
+    if (!relevant) {
+        DEBUG("Metadata type not relevant " << (int)type);
+        return;
+    }
+
+    if (dev!=nullptr) {
+        DEBUG("dev _metadataCallback try count " << dev2devId(unit->getAddress(), dev) << " to " << value);
+        _metadataCallback(_driverBase, dev2devId(unit->getAddress(), dev), dtype, propertyId, dvalue);
+    }
+    else
+        _metadataCallback(_driverBase, unit2devId(unit->getAddress()), dtype, propertyId, dvalue);
+}
+
+void ChangeListener::valueChanged(AndamBusSlave *unit, SlaveVirtualPort *port, int32_t oldValue) {
+    if (unit == nullptr || port == nullptr)
         return;
 //    cout << "valueChanged" << endl;
-    INFO("valueChanged");
+    DEBUG("valueChanged");
 
-    uint8_t unitId = slave->getAddress();
+    uint8_t unitId = unit->getAddress();
 
     int portId, devId;
 
     if (port->getDevice() == nullptr) { // unit pin
         portId = port2Id(unitId, port);
         devId = unitId;
-        INFO("pin value changed on unit " << slave->getAddress() << " pin=" << (int)port->getPin() << " port=" << (int)port->getIdOnDevice() << " from " << oldValue << " to " << port->getValue());
+        DEBUG("pin value changed on unit " << unit->getAddress() << " pin=" << (int)port->getPin() << " port=" << (int)port->getIdOnDevice() << " from " << oldValue << " to " << port->getValue());
     } else {
         SlaveVirtualDevice *dev = port->getDevice();
 
         if (dev->getBus() == nullptr) { // virtual device port
             devId = dev2devId(unitId, dev);
             portId = ordinal2portId(port->getIdOnDevice());
-            INFO("dev port value changed on unit " << slave->getAddress() << " pin=" << (int)port->getPin() << " port=" << (int)port->getIdOnDevice() << " from " << oldValue << " to " << port->getValue());
+            DEBUG("dev port value changed on unit " << unit->getAddress() << " pin=" << (int)port->getPin() << " port=" << (int)port->getIdOnDevice() << " from " << oldValue << " to " << port->getValue());
         } else { // bus device port
             devId = longaddr2devId(unitId, dev->getLongAddress());
             portId = ordinal2portId(port->getIdOnDevice());
-            INFO("bus dev port value changed on unit " << slave->getAddress() << " pin=" << (int)port->getPin() << " longaddr=0x" << hex << dev->getLongAddress() << dec << " port=" << (int)port->getIdOnDevice() << " from " << oldValue << " to " << port->getValue());
+            DEBUG("bus dev port value changed on unit " << unit->getAddress() << " pin=" << (int)port->getPin() << " longaddr=0x" << hex << dev->getLongAddress() << dec << " port=" << (int)port->getIdOnDevice() << " from " << oldValue << " to " << port->getValue());
         }
     }
 
     _valueCallback(_driverBase, devId, portId, port->getValue());
+}
+
+vector<string> split(string str, char delimiter)
+{
+    vector<string> tokens;
+    stringstream buf;
+    string token;
+
+    for (string::iterator it = str.begin();it != str.end();it++)
+    {
+        if (*it == delimiter)
+        {
+            tokens.push_back(buf.str());
+            buf.str(string());
+        }
+        else
+            buf << *it;
+    }
+
+    string last = buf.str();
+    if (last.size() > 0)
+        tokens.push_back(last);
+
+    return tokens;
 }
 
 void busdev2idev(IDevice &d, SlaveVirtualDevice *dev, int unitId) {
@@ -68,12 +120,12 @@ void busdev2idev(IDevice &d, SlaveVirtualDevice *dev, int unitId) {
     d.code = ss.str();
     d.config = "therm_ab";
 
-    INFO("busdev2idev dev " << d.code << " id=" << d.id << " parent=" << d.parent);
+    DEBUG("busdev2idev dev " << d.code << " id=" << d.id << " parent=" << d.parent);
 }
 
 void vdev2idev(IDevice &d, SlaveVirtualDevice *dev) {
     stringstream ss;
-    d.cls = DeviceClass::GENERIC;
+    d.cls = abusDevType2DevCls(dev->getType());
     d.subCls = DeviceSubclass::GENERIC;
     d.id = dev->getPermanentId();
     uint8_t unitId = dev->getUnit()->getAddress();
@@ -81,8 +133,10 @@ void vdev2idev(IDevice &d, SlaveVirtualDevice *dev) {
     ss << "d" << (int)unitId << "." << (int)dev->getPin();
     d.code = ss.str();
     d.config = "slave";
+    d.internalId = dev->getId();
+    d.internalType = static_cast<uint8_t>(dev->getType());
 
-    INFO("vdev2idev dev " << d.code << " id=" << d.id << " parent=" << d.parent);
+    DEBUG("vdev2idev dev " << d.code << " id=" << d.id << " parent=" << d.parent);
 }
 
 void unit2idev(IDevice &d, AndamBusSlave *slave) {
@@ -95,7 +149,7 @@ void unit2idev(IDevice &d, AndamBusSlave *slave) {
     d.code = ss.str();
     d.config = "slave";
 
-    INFO("slave2idev dev " << d.code << " id=" << d.id << " parent=" << d.parent);
+    DEBUG("slave2idev dev " << d.code << " id=" << d.id << " parent=" << d.parent);
 }
 
 void vport2iport(IPort &p, SlaveVirtualPort *abPort, int deviceId, uint8_t unitId) {
@@ -117,7 +171,7 @@ void vport2iport(IPort &p, SlaveVirtualPort *abPort, int deviceId, uint8_t unitI
     if (pt == VirtualPortType::ANALOG_INPUT || pt == VirtualPortType::ANALOG_OUTPUT || pt == VirtualPortType::ANALOG_OUTPUT_PWM) {
         p.type = PortType::ANALOG;
         p.aValue = abPort->getValue();
-        WARNING("value=" << p.aValue);
+        DEBUG("value=" << p.aValue);
     }
     else {
         p.type = PortType::DIGITAL;
@@ -130,29 +184,32 @@ void vport2iport(IPort &p, SlaveVirtualPort *abPort, int deviceId, uint8_t unitI
     else
         p.direction = PortDirection::INPUT;
 
-    INFO("vport2iport " << p.code << " id=" << p.id << " deviceId=" << p.deviceId);
+    DEBUG("vport2iport " << p.code << " id=" << p.id << " deviceId=" << p.deviceId);
 }
-
 
 void getSlaveDevicePorts(vector<IPort> &iports, int deviceId) {
 
     int slaveId = devId2unit(deviceId);
 
-    WARNING("getSlaveDevicePorts " << deviceId << " " << slaveId);
+    DEBUG("getSlaveDevicePorts " << deviceId << " " << slaveId);
 
     AndamBusSlave *slave = abm->findSlaveByAddress(slaveId);
     if (slave != nullptr) {
         vector<SlaveVirtualPort*> ports;
 
         if (devIdIsBusDevice(deviceId)) {
-            WARNING("bus dev port");
-            ports = slave->getVirtualDevicePortsByLongAddress(devId2longaddr(deviceId));
+            DEBUG("bus dev port");
+            uint64_t la = devId2longaddr(deviceId);
+
+            INFO("la=0x" << hex << la << dec << " ");
+            ports = slave->getVirtualDevicePortsByLongAddress(la);
         } else {
+ //           cout << "getSlaveDevPort" << endl;
             int vdevPin = devId2pin(deviceId);
             ports = slave->getVirtualDevicePortsByPin(vdevPin);
         }
 
-//        WARNING("ports on vdev " << vdevPin << " " << ports.size());
+        DEBUG("ports on dev " << deviceId << " " << ports.size());
 
         for (auto it=ports.begin();it!=ports.end();it++) {
             IPort p = {};
@@ -163,16 +220,16 @@ void getSlaveDevicePorts(vector<IPort> &iports, int deviceId) {
 
             vport2iport(p, abPort, deviceId, slave->getAddress());
 
-            WARNING("creating dev port " << p.code << " deviceId=" << p.deviceId << " id=" << p.id);
+            DEBUG("creating dev port " << p.code << " deviceId=" << p.deviceId << " id=" << p.id);
             iports.push_back(p);
         }
     } else {
-        WARNING("slave not found" << slaveId);
+        DEBUG("slave not found" << slaveId);
     }
 }
 
 void getSlavePorts(vector<IPort> &iports, int deviceId) {
-    WARNING("getSlavePorts " << deviceId);
+    DEBUG("getSlavePorts " << deviceId);
     AndamBusSlave *slave = abm->findSlaveByAddress(deviceId);
 
     if (slave != nullptr) {
@@ -225,7 +282,7 @@ bool setPortValue(int devId, int portId, int value) {
         slaveId = devId/ANDAMBUS_UNIT_PREFIX;*/
     unitId = devId2unit(devId);
 
-    INFO("setPortVal " << (int)unitId << "," << portId << " to " << value);
+    DEBUG("setPortVal " << (int)unitId << "," << portId << " to " << value);
     AndamBusSlave *slave = abm->findSlaveByAddress(unitId);
 
     if (slave == nullptr)
@@ -280,6 +337,8 @@ extern "C"
 
             abm->detectSlaves();
             abm->refreshSlaves();
+
+//            setLogLevel(LogLevel::DEBUG);
             return true;
         } catch (ExceptionBase &ex) {
             ERROR("Cannot initialize driver:" << ex.what());
@@ -305,7 +364,7 @@ extern "C"
                     IDevice d;
                     unit2idev(d, slave);
 
-                    WARNING("slave " << d.code);
+                    DEBUG("slave " << d.code);
                     dev.push_back(d);
 
                     vector<SlaveVirtualDevice*> &devs = slave->getDevices();
@@ -313,13 +372,13 @@ extern "C"
                     for(auto itd=devs.begin(); itd!= devs.end();itd++) {
                         SlaveVirtualDevice *vdev = *itd;
 
-                        IDevice d;
+                        IDevice d = {0};
                         if (vdev->getBus() == nullptr)
                             vdev2idev(d, vdev);
                         else
                             busdev2idev(d, vdev, slave->getAddress());
 
-                        WARNING("creating dev " << d.code << " id=" << d.id << " parent=" << d.parent);
+                        DEBUG("creating dev " << d.code << " id=" << d.id << " parent=" << d.parent);
                         dev.push_back(d);
 
                     }
@@ -334,11 +393,89 @@ extern "C"
         return dev;
     }
 
+    bool configDevice(int devId, const string name, const string value) {
+        DEBUG("configDevice " << devId << " " << name << ":" << value);
+
+
+        SlaveVirtualDevice *dev = devId2dev(devId);
+
+        if (dev == nullptr) {
+            WARNING("device not found " << devId);
+            return false;
+        }
+
+        uint8_t unitId = devId2unit(devId);
+
+        if (unitId < 1 || unitId > ANDAMBUS_ADDRESS_MAX) {
+            WARNING("Andam unit ID invalid " << (int)unitId);
+            return false;
+        }
+
+        AndamBusSlave *unit = abm->findSlaveByAddress(unitId);
+
+        if (unit==nullptr) {
+            WARNING("Andam unit not found " << (int)unitId);
+            return false;
+        }
+
+        AndamBusPropertyType tp;
+        uint8_t propId;
+
+        ConfigName2AndambusPropertyType(tp, propId, name);
+
+        if (tp == AndamBusPropertyType::NONE) {
+            WARNING("not setting property for " << name);
+            return false;
+        }
+
+        try {
+            int ivalue = stoi(value);
+
+            unit->doPropertySet(dev->getId(), tp, ivalue, propId);
+
+            WARNING("setting on dev=" << (int)dev->getId() << " tp:" << (int)tp << " propid=" << (int)propId << " value=" << ivalue);
+            return true;
+        } catch (invalid_argument &e) {
+            WARNING("invalid property integer value " << value);
+            return false;
+        }
+    }
+
+
+    vector<IConfigItem> getConfigDevice(int devId) {
+        vector<IConfigItem> cfg;
+
+        SlaveVirtualDevice *dev = devId2dev(devId);
+
+        if (dev != nullptr)  {
+            map<AndamBusPropertyType,map<uint8_t,int32_t>> &props = dev->getProperties();
+
+            for(auto it=props.begin();it!=props.end();it++) {
+                AndamBusPropertyType type = it->first;
+                map<uint8_t,int32_t> &vals = it->second;
+
+                for (auto itp = vals.begin();itp!=vals.end();itp++) {
+                    string name = AndambusPropertyType2ConfigName(type, itp->first);
+
+                    if (name.length()>0) {
+                        IConfigItem ci = {.name= name, .value= to_string(itp->second) };
+
+//                        WARNING("adding dev cfg " << name << ":" << itp->second );
+                        cfg.push_back(ci);
+                    }
+                }
+            }
+        }
+
+//        WARNING("getConfigDevice " << devId << " " << cfg.size());
+        return cfg;
+    }
+
     vector<IPort> getPorts(int deviceId)
     {
         vector<IPort> iports;
 
-        DEBUG("getPorts " << deviceId);
+ //       DEBUG("getPorts " << deviceId);
 
         if (abm != nullptr)
             try {
@@ -350,20 +487,43 @@ extern "C"
             } catch (ExceptionBase &ex) {
                 ERROR("getPorts:" << ex.what());
             }
+
+//        INFO("getPorts iports=" << iports.size());
         return iports;
     }
 
+    bool firstRefresh = true;
+
     bool refreshDevice() {
-        cout << "refreshDevice" << endl;
-//        WARNING("refreshDevice");
+//        cout << "refreshDevice" << endl;
+        DEBUG("refreshDevice");
 
         if (abm != nullptr)
             try {
                 abm->refreshPortValues(false);
 
+                if (refreshCounter++ % 100 == 0) {
+                    vector<AndamBusSlave*> &units = abm->getSlaves();
+                    for (auto it=units.begin();it<units.end();it++) {
+                        AndamBusSlave *unit = (*it);
+                        unit->refreshMetadata();
+
+                        if (firstRefresh) {
+                            _metadataCallback(_driverBase, unit2devId(unit->getAddress()), DeviceMetadataType::NetApiVersion, 0, unit->getApiVersion() * 0x10000 );
+                            _metadataCallback(_driverBase, unit2devId(unit->getAddress()), DeviceMetadataType::SwVersion, 0, unit->getSWVersion() * 0x10000 );
+                            _metadataCallback(_driverBase, unit2devId(unit->getAddress()), DeviceMetadataType::HwType, 0, (int)unit->getHwType() );
+                        }
+
+                    }
+                    if (firstRefresh)
+                        firstRefresh=false;
+                }
+
+
 /*                if (_valueCallback != nullptr) {
                     abm->getSlaves()
                 }*/
+
             } catch (ExceptionBase &ex) {
                 ERROR("refreshDevice:" << ex.what());
             } catch (exception &ex) {
@@ -452,14 +612,15 @@ SlaveVirtualDevice* devId2dev(int devId) {
     if (devId < ANDAMBUS_UNIT_PREFIX)
         return nullptr;
 
+//    cout << "devId2dev" << endl;
     uint8_t pin = devId2pin(devId);
     uint8_t unitId = devId2unit(devId);
 
-    AndamBusSlave *slave = abm->findSlaveByAddress(unitId);
+    AndamBusSlave *unit = abm->findSlaveByAddress(unitId);
 
-    if (slave == nullptr)
+    if (unit == nullptr)
         return nullptr;
-    return slave->getVirtualDeviceByPin(pin);
+    return unit->getVirtualDeviceByPin(pin);
 }
 
 uint8_t devId2unit(int devId) {
@@ -476,11 +637,13 @@ int pin2id(uint8_t unitID, uint8_t pin) {
 }
 
 uint8_t devId2pin(int devId) {
-    assert(devId%ANDAMBUS_UNIT_PREFIX<ANDAMBUS_BUSDEV_START);
+//    cout << "devId:" << devId << endl;
+//    assert(devId%ANDAMBUS_UNIT_PREFIX<ANDAMBUS_BUSDEV_START);
     return devId%ANDAMBUS_UNIT_PREFIX;
 }
 
 uint8_t portId2pin(int portId) {
+//    cout << "portId2pin" << endl;
     return devId2pin(portId);
 }
 
@@ -546,7 +709,7 @@ int port2Id(uint8_t unitId, SlaveVirtualPort *port) {
         return pin2id(unitId, port->getPin());
 //    SlaveVirtualDevice *dev = port->getDevice();
 
-    INFO("getIdOnDevice=" << (int)port->getIdOnDevice());
+    DEBUG("getIdOnDevice=" << (int)port->getIdOnDevice());
     return ordinal2portId(port->getIdOnDevice());
 }
 
@@ -590,4 +753,137 @@ const std::string devType2IconCode(VirtualDeviceType type) {
     }
 
     return ANDAMBUS_GENERIC_ICON_CODE;
+}
+
+/*
+    FREE_MEMORY = 0x60, // returns number of free bytes on unit
+    UPTIME = 0x61,     // returns uptime in seconds
+    TICK = 0x62,     // returns ticks/iterations from start
+	MAX_CYCLE_DURATION = 0x63, // returns main cycle work duration maximum is ms
+	CYCLE_DURATION_RANGE = 0x64, // returns main cycle duration range counts 0: 10ms, 1:30ms, 2: 50ms, 3: 100ms, 4: 150ms, 5: 200ms
+
+    ERROR_COUNT_CRC = 0x80,  // returns CRC errors count
+    ERROR_COUNT_SYNC = 0x81,  // returns sync lost errors count
+    ERROR_COUNT_LONG = 0x82,  // returns packet too long errors count
+
+
+enum class DeviceMetadataType:unsigned char {
+    Started='S', // time of start in seconds from 2020-01-01
+    SwVersion='V',
+    NetApiVersion='N',
+    ThreadCount='T',
+    IrqCount='I',
+    RefreshTryCount='C',
+    FreeMemory='M'
+};
+
+
+*/
+
+DeviceClass abusDevType2DevCls(VirtualDeviceType tp)
+{
+    switch (tp) {
+    case VirtualDeviceType::NONE:
+        return DeviceClass::GENERIC;
+    case VirtualDeviceType::THERMOMETER:
+        return DeviceClass::SENSOR;
+    case VirtualDeviceType::THERMOSTAT:
+        return DeviceClass::HEATING_CONTROL;
+    case VirtualDeviceType::BLINDS_CONTROL:
+        return DeviceClass::BLINDSCONTROL;
+    case VirtualDeviceType::PUSH_DETECTOR:
+        return DeviceClass::DETECTOR;
+    case VirtualDeviceType::DIFF_THERMOSTAT:
+        return DeviceClass::HEATING_CONTROL;
+    case VirtualDeviceType::CIRC_PUMP:
+        return DeviceClass::HEATING_CONTROL;
+    case VirtualDeviceType::SOLAR_THERMOSTAT:
+        return DeviceClass::HEATING_CONTROL;
+    case VirtualDeviceType::DIGITAL_POTENTIOMETER:
+        return DeviceClass::GENERIC;
+    case VirtualDeviceType::I2C_DISPLAY:
+        return DeviceClass::DISPLAY;
+	case VirtualDeviceType::HVAC:
+        return DeviceClass::HEATING_CONTROL;
+    case VirtualDeviceType::TIMER:
+        return DeviceClass::TIMER;
+	case VirtualDeviceType::MODIFIER:
+        return DeviceClass::REMOTE;
+    }
+
+    return DeviceClass::GENERIC;
+}
+
+bool convertMetadataType(MetadataType type, DeviceMetadataType &dtype, int value, int &dvalue) {
+    dvalue = value;
+    switch(type) {
+    case MetadataType::FREE_MEMORY:
+        dtype = DeviceMetadataType::FreeMemory;
+        return true;
+    case MetadataType::TICK:
+        dtype = DeviceMetadataType::TickCount;
+        return true;
+    case MetadataType::ERROR_COUNT_CRC:
+        dtype = DeviceMetadataType::ErrorCount;
+        return true;
+    case MetadataType::UPTIME:
+        dtype = DeviceMetadataType::Started;
+        dvalue = time(0)-value;
+        return true;
+    case MetadataType::TRY_COUNT:
+        dtype = DeviceMetadataType::ErrorCount;
+        return true;
+    default:
+        return false;
+    }
+}
+
+void ConfigName2AndambusPropertyType(AndamBusPropertyType &tp, uint8_t &propId, string configName) {
+    tp = AndamBusPropertyType::NONE;
+
+    if (configName.substr(0, sizeof(ANDAMBUS_PROPERTY_PREFIX)-1) != ANDAMBUS_PROPERTY_PREFIX) {
+        WARNING("not ab prefix");
+        return;
+    }
+
+    string abname = configName.substr(sizeof(ANDAMBUS_PROPERTY_PREFIX)-1);
+    vector<string> namecomp = split(abname, ":");
+
+    string propname, spropid;
+    if (namecomp.size() > 1) {
+        spropid = namecomp.at(0);
+        propname = namecomp.at(1);
+    } else {
+        spropid = "0";
+        propname = namecomp.at(0);
+    }
+
+    try {
+        propId = stoi(spropid);
+    } catch (invalid_argument &e) {
+        WARNING("invalid property integer value " << (int)propId);
+        return;
+    }
+
+    if (propname == "temp")
+        tp = AndamBusPropertyType::TEMPERATURE;
+    if (propname == "p_sec")
+        tp = AndamBusPropertyType::PERIOD_SEC;
+    if (propname == "p_ms")
+        tp = AndamBusPropertyType::PERIOD_MS;
+
+}
+
+string AndambusPropertyType2ConfigName(AndamBusPropertyType tp, uint8_t propId) {
+    switch (tp) {
+    case AndamBusPropertyType::TEMPERATURE:
+        return string(ANDAMBUS_PROPERTY_PREFIX) + to_string(propId) + ":temp";
+    case AndamBusPropertyType::PERIOD_SEC:
+        return string(ANDAMBUS_PROPERTY_PREFIX) + to_string(propId) + ":p_sec";
+    case AndamBusPropertyType::PERIOD_MS:
+        return string(ANDAMBUS_PROPERTY_PREFIX) + to_string(propId) + ":p_ms";
+
+    default:
+        return "";
+    }
 }

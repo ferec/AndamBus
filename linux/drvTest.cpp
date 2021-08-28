@@ -6,6 +6,7 @@ using namespace std;
 t_logCallback _logCallback = nullptr;
 void* _driverBase = nullptr;
 t_valueCallback _valueCallback=nullptr;
+t_metadataCallback _metadataCallback=nullptr;
 
 int main(int argc, char *argv[]) {
     SlaveVirtualPort port(2, VirtualPortType::DIGITAL_INPUT, nullptr, 36, 1);

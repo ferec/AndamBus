@@ -13,6 +13,7 @@ public:
     } ;
 
     virtual void valueChanged(AndamBusSlave *unit, SlaveVirtualPort *port, int32_t oldValue);
+    virtual void metadataChanged(AndamBusSlave *unit, SlaveVirtualDevice *dev, MetadataType type, uint16_t propertyId, int32_t value);
     virtual void idChanged(AndamBusSlave *unit, ItemType type, uint8_t oldId, uint8_t newId);
 };
 
