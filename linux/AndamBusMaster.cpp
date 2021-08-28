@@ -176,6 +176,8 @@ void AndamBusMaster::detectSlaves() {
                 retryCount = 0;
 
             inSync = false;
+        } catch (BusTimeoutException &e) {
+            AB_INFO("no device at addr " << addr);
         }
     }
 }
@@ -248,7 +250,8 @@ void AndamBusMaster::detectSlave(uint16_t address) {
         } else
             AB_DEBUG("slave " << address<<" detected again");
     } catch (BusTimeoutException &e) {
-        AB_INFO("Detect:" << e.what());
+        AB_DEBUG("Detect:" << e.what());
+        throw e;
     }
 
 }
@@ -619,7 +622,7 @@ void AndamBusMaster::getResponse(AndamBusCommand cmd, AndamBusFrame &resp) {
         if (ife != nullptr)
             cntInvalidFrm++;
 
-        AB_INFO("exception " << e.what());
+        AB_DEBUG("exception " << e.what());
         throw;
     }
 }

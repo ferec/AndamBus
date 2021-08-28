@@ -254,7 +254,7 @@ void printPorts(AndamBusSlave *slave) {
             cout << "pin " << (int)port->getPin() << " " << virtualPortTypeStringShort(port->getType());
         else {
             if (dev->getBus() != nullptr)
-                cout << "dev 0x" << hex << stripLongAddress(dev->getLongAddress()) << dec << "(" << (int)port->getId() << ")";
+                cout << "dev 0x" << hex << stripLongAddress(dev->getLongAddress()) << dec << "(id " << (int)port->getId() << ",dev "<<(int)dev->getId()<<")";
             else
                 cout << "id " << (int)port->getId() << " p " << (int)port->getIdOnDevice() << " (pin " << (int)port->getPin() << " dev " << (int)dev->getId() << "," << virtualPortTypeStringShort(port->getType()) << ")";
         }
@@ -496,7 +496,7 @@ void printProperties(AndamBusSlave *slave, uint8_t id) {
         map<uint8_t,int32_t> &p = it->second;
 
         for (auto itp=p.begin();itp!=p.end();itp++) {
-            cout << "Property " << dec << propertyTypeString(type) << " (id " << (int)itp->first;
+            cout << "Property (" << dec << (int)type << ")" << propertyTypeString(type) << " (id " << (int)itp->first;
 
             if (dev != nullptr) {
                 string ps = getDevicePropertyString(dev->getType(), type, itp->first);
