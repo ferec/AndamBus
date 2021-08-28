@@ -1,11 +1,12 @@
 #include "ArduinoDevFact.h"
 
 #include "DiffThsArduinoDevice.h"
+#include "ThermostatDevice.h"
 #include "SolarThermostatDevice.h"
 #include "CircPumpDevice.h"
 #include "DigiPot.h"
 #include "Display.h"
-#include "Midea.h"
+//#include "Midea.h"
 #include "TimerDevice.h"
 #include "ClickSwitchDevice.h"
 #include "ClickModifierDevice.h"
@@ -14,6 +15,8 @@
 
 ArduinoDevice* ArduinoDevFact::getDeviceByType(VirtualDeviceType type, uint8_t id, uint8_t pin, ArduinoAndamBusUnit *abu) {
  switch (type) {
+  case VirtualDeviceType::THERMOSTAT:
+    return new ThermostatDevice(id,pin,abu);
   case VirtualDeviceType::SOLAR_THERMOSTAT:
     return new SolarThermostatDevice(id,pin,abu);
   case VirtualDeviceType::DIFF_THERMOSTAT:
@@ -24,8 +27,8 @@ ArduinoDevice* ArduinoDevFact::getDeviceByType(VirtualDeviceType type, uint8_t i
     return new Display(id,pin,abu);
   case VirtualDeviceType::DIGITAL_POTENTIOMETER:
     return new DigiPot(id,pin,abu);
-  case VirtualDeviceType::HVAC:
-    return new Midea(id,pin,abu);
+/*  case VirtualDeviceType::HVAC:
+    return new Midea(id,pin,abu);*/
   case VirtualDeviceType::TIMER:
     return new TimerDevice(id,pin,abu);
   case VirtualDeviceType::PUSH_DETECTOR:

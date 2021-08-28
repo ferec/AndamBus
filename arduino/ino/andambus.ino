@@ -23,7 +23,7 @@ SoftwareSerial mySerial(4, 5);
 ArduinoAndamBusUnit abu(mySerial, RS485_TRANSMIT_PIN, UNIT_ADDRESS);
 #endif*/
 
- 
+
 void setup() {
 //  int pinx = 15;
 //  pinMode(pinx,INPUT_PULLUP);
@@ -40,16 +40,13 @@ void setup() {
 
 
 //  Serial.println("Andambus x");
-  LOG_U(F("AndamBus"));
-
-//  LOG_U("abu size:" << sizeof(ArduinoDevice));
+  LOG_U(F("AndamBus version ") << ANDAMBUS_UNIT_SW_VERSION_MAJOR << "." << ANDAMBUS_UNIT_SW_VERSION_MINOR << "." << ANDAMBUS_UNIT_SW_VERSION_BUILD);
+  LOG_U(F("AndamBus build date ") << ANDAMBUS_UNIT_SW_BUILD_DATE);
 
   abu.init();
 
-
 #ifdef ANDAMBUS_TEST
   abu.createTestItems();
-
 #endif
 
   LOG_U(F("mem:") << iom::dec << freeMemory());
