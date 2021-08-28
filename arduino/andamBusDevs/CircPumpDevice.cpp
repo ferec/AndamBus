@@ -6,7 +6,7 @@ CircPumpDevice::CircPumpDevice(uint8_t _id, uint8_t _pin, ArduinoAndamBusUnit *_
 //  t_addrh(0), t_addrl(0),
 //  tBusIndex(0xff), tDevIndex(0xff),
   runPeriod(DEFAULT_ON_PERIOD_SEC), idlePeriod(DEFAULT_IDLE_PERIOD_SEC), idlePeriodHigh(DEFAULT_IDLE_PERIOD_HIGH_SEC),
-  tLimit(DEFAULT_TEMPERATURE_LIMIT_CG), tLimitH(DEFAULT_TEMPERATURE_LIMIT_HIGH_CG)
+  tLimit(DEFAULT_TEMPERATURE_LIMIT_CG), tLimitH(DEFAULT_TEMPERATURE_LIMIT_HIGH_CG), manualMode(false),nightMode(false)
 {
   setNoSwitchPeriod(DEFAULT_CIRCPUMP_NOSWITCH_PERIOD_SEC);
 }
@@ -153,6 +153,9 @@ bool CircPumpDevice::setProperty(AndamBusPropertyType type, int32_t value, uint8
 void CircPumpDevice::doWork() {
   int16_t temp = 0;
 
+  if (nightMode && !isTGActive())
+	  return;
+  
   // ensure do not switch too fast
   if (tgTooFast()) {
     //LOG_U(F("circ Too fast"));
@@ -175,10 +178,10 @@ void CircPumpDevice::doWork() {
   // read temperature
   bool hasT = tmLimit.readTemp(temp);
 
-  LOG_U(F("circ temp=") << iom::dec << temp << " " << hasT << " " << tLimit);
+//  LOG_U(F("circ temp=") << iom::dec << temp << " " << hasT << " " << tLimit);
 
   // if temperature sensor available and under limit, stop running
-  if (hasT && temp < tLimit) {
+  if (hasT && (temp < tLimit && !manualMode)) {
 	  
 	if (isTGActive()) {
 		activateTGPin(false);
@@ -202,11 +205,12 @@ void CircPumpDevice::doWork() {
     if (getSecondsFromLastSwitch() >= runPeriod) {
       activateTGPin(false);
 	  setChanged(true);
+	  manualMode=false;
 	}
   } else {
     // if not running and last switch was before idlePeriod seconds, turn on
     if (getSecondsFromLastSwitch() >= iper) {
-	  LOG_U(F("act1"));
+//	  LOG_U(F("act1"));
       activateTGPin(true);
 	  setChanged(true);
 	}
@@ -219,24 +223,33 @@ void CircPumpDevice::doWork() {
 }
 
 uint8_t CircPumpDevice::getPortCount() {
-  return 1;
+  return 2;
 }
 
 int16_t CircPumpDevice::getPortValue(uint8_t idx) {
+  if (idx == 1)
+	  return nightMode?1:0;
   return idx == 0 ? isTGActive() : 0;
 }
 
 void CircPumpDevice::setPortValue(uint8_t idx, int16_t val) {
+  if (idx == 1) {
+	  nightMode = val!=0;
+  }
+  
   if (idx == 0 && !isTGActive() && val!=0) {
-	LOG_U(F("act2"));
+//	LOG_U(F("act2"));
     activateTGPin(true);
 	setChanged(true);
+	manualMode = true;
   }
 }
 
 uint8_t CircPumpDevice::getPortId(uint8_t idx) {
 //  LOG_U(F("getPortId ") << tgPortId);
-  return tgPortId;
+  if (idx == 0)
+	return tgPortId;
+  return portIdNight;
 }
 
 VirtualPortType CircPumpDevice::getPortType(uint8_t idx) {
@@ -247,4 +260,6 @@ void CircPumpDevice::setPortId(uint8_t idx, uint8_t id) {
 //  LOG_U(F("Setting port id ") << (int)idx << " to " << (int)id);
   if (idx == 0)
     tgPortId = id;
+  if (idx == 1)
+    portIdNight = id;
 }

@@ -10,6 +10,8 @@
 #define SHADING_DEFAULT_DOWN_TIME_SEC 40
 #define SHADING_DEFAULT_SHADE_TIME_SEC 3
 #define SHADING_DIFF_THRESHOLD_MS 50
+
+#define RELATED_SHUTTER_COUNT_MAX 4
 //#define SHADING_DIFF_THRESHOLD_MS_PREC 20
 
 //#define WINDOWSHADE_MANUAL 1
@@ -55,13 +57,17 @@ class WindowShadingDevice:public ArduinoDevice {
 	uint16_t reqPosition, reqShadow, // 1/100th of a second
 		downTime, shadeTime, // 1/100th of a second
 		lastUpdate;
+		
+	uint8_t holdClickCnt;
+
+	uint8_t relatedShutters[RELATED_SHUTTER_COUNT_MAX]; // main pin of related shutters
 
 	virtual bool configMissing();
 	
   private:
-    void clicked(uint8_t cnt, Direction dir);
-    void holdStart(uint8_t cnt, Direction dir);
-    void holdFinished(uint8_t cnt, Direction dir);
+    void clicked(uint8_t cnt, Direction dir, bool related);
+    void holdStart(uint8_t cnt, Direction dir, bool related);
+    void holdFinished(uint8_t cnt, Direction dir, bool related);
 	
 	bool initPin(uint8_t pin);
     bool blockPin(uint8_t pin);

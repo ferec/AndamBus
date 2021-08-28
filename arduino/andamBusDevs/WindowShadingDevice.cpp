@@ -8,11 +8,16 @@ WindowShadingDevice::WindowShadingDevice(uint8_t _id, uint8_t _pin, ArduinoAndam
 	downTime(SHADING_DEFAULT_DOWN_TIME_SEC*100),shadeTime(SHADING_DEFAULT_SHADE_TIME_SEC*100),
 	//manual(false)
 	//boolPack(0)
-	status(Status::UNINIT)
+	status(Status::UNINIT),
+	relatedShutters{},
+	holdClickCnt(0)
 {
 	detUp.setClickHandler(clickHandler, this);
 	detDown.setClickHandler(clickHandler, this);
-	
+
+
+/*	for (int i=0;i<4;i++)
+		LOG_U("related " << relatedShutters[i]);*/
 }
 
 WindowShadingDevice::~WindowShadingDevice() {
@@ -155,6 +160,16 @@ uint8_t WindowShadingDevice::getPropertyList(ItemProperty propList[], uint8_t si
 	propList[cnt].propertyId = 1;
 	propList[cnt++].value = shadeTime*10;
 
+	for (int i=0;i<RELATED_SHUTTER_COUNT_MAX;i++) {
+//		LOG_U("relatedShutters[" << i << "]=" << (int)relatedShutters[i]);
+		if (relatedShutters[i] != 0) {
+			propList[cnt].type = AndamBusPropertyType::PIN;
+			propList[cnt].entityId = id;
+			propList[cnt].propertyId = i+RELATED_SHUTTER_COUNT_MAX;
+			propList[cnt++].value = relatedShutters[i];
+		}
+	}
+
 	return cnt;
 }
 
@@ -191,18 +206,33 @@ bool WindowShadingDevice::setProperty(AndamBusPropertyType type, int32_t value, 
 		}
 	}
 
+	if (type == AndamBusPropertyType::PIN && (propertyId >= 4 || propertyId <= 4+RELATED_SHUTTER_COUNT_MAX) ) {
+		LOG_U("PIN " << (int)propertyId << " " << value);
+		uint8_t rpin = value;
+		if (ArduinoAndamBusUnit::pinValid(rpin) && rpin != pin)
+			relatedShutters[propertyId-4]=rpin;
+	}
+
 	if (type == AndamBusPropertyType::PERIOD_MS && propertyId == 0) {
-		if (value >= 0 && value < 650000)
+		if (value >= 0 && value < 650000) {
 			downTime = value/10; // 1/100th of a second
+			if (actPosition > value)
+				actPosition = value;
+		}
+
 		
 		if (SHADING_DEBUG)
 			LOG_U("downTime=" << iom::dec << downTime);
 	}
 
 	if (type == AndamBusPropertyType::PERIOD_MS && propertyId == 1) {
-		if (value >= 0 && value < 650000)
+		if (value >= 0 && value < 650000) {
 			shadeTime = value/10; // 1/100th of a second
+			if (actShadow > value)
+				actShadow = value;
+		}
 	}
+
 
   return ArduinoDevice::setProperty(type, value, propertyId);
 }
@@ -218,6 +248,8 @@ uint8_t WindowShadingDevice::restore(uint8_t data[], uint8_t length)
   if (length >= used + cnt32 * 4 + cnt16 * 2 + 2*2) {
 	downTime = data16[cnt16++];
 	shadeTime = data16[cnt16++];
+	
+	LOG_U("restored shadeTime=" << shadeTime);
   }
   
 
@@ -237,6 +269,10 @@ uint8_t WindowShadingDevice::restore(uint8_t data[], uint8_t length)
 	initPin(pinDirDown);
   }
 
+  if (length >= used + cnt32 * 4 + cnt16 * 2 + cnt8 + RELATED_SHUTTER_COUNT_MAX) {
+	for (int i=0;i<RELATED_SHUTTER_COUNT_MAX;i++)
+		relatedShutters[i] = data8[cnt8++];
+  }
 
   return used + cnt32 * 4 + cnt16 * 2 + cnt8;
 }
@@ -259,6 +295,9 @@ uint8_t WindowShadingDevice::getPersistData(uint8_t data[], uint8_t maxlen)
   data8[cnt8++]=pinMove;
   data8[cnt8++]=pinDirDown;
 
+  for (int i=0;i<RELATED_SHUTTER_COUNT_MAX;i++)
+	  data8[cnt8++]=relatedShutters[i];
+
   return len + cnt32 * 4 + cnt16 * 2 + cnt8;
 }
 
@@ -270,13 +309,13 @@ void WindowShadingDevice::clickHandler(int cnt, MultiClickDetector *det, void *o
 		
 		switch (evtType) {
 			case MultiClickDetector::EventType::Click:
-				wsd->clicked(cnt, dir);
+				wsd->clicked(cnt, dir, false);
 				break;
 			case MultiClickDetector::EventType::HoldStart:
-				wsd->holdStart(cnt, dir);
+				wsd->holdStart(cnt, dir, false);
 				break;
 			case MultiClickDetector::EventType::HoldFinished:
-				wsd->holdFinished(cnt, dir);
+				wsd->holdFinished(cnt, dir, false);
 				break;
 		}
 	}
@@ -332,8 +371,10 @@ void WindowShadingDevice::handleRequest() {
 		return;
 	}
 
-	if (status == Status::UNINIT)
+	if (status == Status::UNINIT) {
 		setStatus(Status::INIT);
+		reqShadow = 0;
+	}
 	else
 		setStatus(Status::MOVING);
 	start(reqDir); 
@@ -412,7 +453,7 @@ void WindowShadingDevice::updateActuals() {
 	}
 	
 	if (SHADING_DEBUG && now % 1000 < 30)
-		LOG_U("update diff:" << iom::dec << diffx << " now=" << now << " actShadow=" << actShadow << " actPosition=" << actPosition << " lastUpdate=" << lastUpdate << " reqPosition=" << reqPosition);
+		LOG_U("update diff:" << iom::dec << diffx << " now=" << now << " actShadow=" << actShadow << " actPosition=" << actPosition << " lastUpdate=" << lastUpdate << " reqPosition=" << reqPosition << " status:" << (int)status << " pin:" << (int)pin);
 	
 	lastUpdate = now;
 }
@@ -425,23 +466,39 @@ void WindowShadingDevice::updateRequestFromActual() {
   reqShadow = (actShadow+5)/10;
 }	
 
-void WindowShadingDevice::clicked(uint8_t cnt, Direction dir) {
+
+void WindowShadingDevice::clicked(uint8_t cnt, Direction dir, bool related) {
 	if (SHADING_DEBUG)
 		LOG_U("clicked status=" << (int)status << " dir=" << (int)dir );
+	
+	if (!related && cnt == 2) {
+		for (int i=0;i<RELATED_SHUTTER_COUNT_MAX;i++) {
+			ArduinoDevice *dev = abu->getDeviceByPin(relatedShutters[i]);
+			if (dev != nullptr && dev->getType() == VirtualDeviceType::BLINDS_CONTROL) {
+				WindowShadingDevice *wsdev = reinterpret_cast<WindowShadingDevice*>(dev);
+				
+				wsdev->clicked(cnt, dir, true);
+			}
+		}
+	}
+	
 	
 	switch (status) {
 		case Status::MOVING:
 		  setStatus(Status::IDLE);
 		  stop();
 		  updateRequestFromActual();
+		  
 		  return;
 		case Status::IDLE:
 //			setStatus(Status::MOVING);
 			
-			if (dir == Direction::UP)
+			if (dir == Direction::UP) {
 				setRequest(0, 0);
-			if (dir == Direction::DOWN)
+			}
+			if (dir == Direction::DOWN) {
 				setRequest(downTime, shadeTime);
+			}
 			break;
 		case Status::UNINIT:
 			if (SHADING_DEBUG)
@@ -455,11 +512,13 @@ void WindowShadingDevice::clicked(uint8_t cnt, Direction dir) {
 				actPosition = 0;
 				actShadow = 0;
 				setRequest(downTime, shadeTime);
+
 			}
 			break;
 		case Status::INIT:
 			setStatus(Status::UNINIT);
 			stop();
+			
 			break;
 		case Status::MANUAL:
 		  if (SHADING_DEBUG)
@@ -467,11 +526,23 @@ void WindowShadingDevice::clicked(uint8_t cnt, Direction dir) {
 	}
 }
 
-void WindowShadingDevice::holdStart(uint8_t cnt, Direction dir) {
+void WindowShadingDevice::holdStart(uint8_t cnt, Direction dir, bool related) {
   switch(status) {
 	  case Status::MOVING:
 	  case Status::IDLE:
 		setStatus(Status::MANUAL);
+		
+		if (!related && cnt == 1) {
+			holdClickCnt = cnt;
+			for (int i=0;i<RELATED_SHUTTER_COUNT_MAX;i++) {
+				ArduinoDevice *dev = abu->getDeviceByPin(relatedShutters[i]);
+				if (dev != nullptr && dev->getType() == VirtualDeviceType::BLINDS_CONTROL) {
+					WindowShadingDevice *wsdev = reinterpret_cast<WindowShadingDevice*>(dev);
+					
+					wsdev->holdStart(cnt, dir, true);
+				}
+			}
+		}
 	  case Status::UNINIT:
 		start(dir);
 		break;
@@ -485,9 +556,27 @@ void WindowShadingDevice::holdStart(uint8_t cnt, Direction dir) {
   }
 }
 
-void WindowShadingDevice::holdFinished(uint8_t cnt, Direction dir) {
+void WindowShadingDevice::holdFinished(uint8_t cnt, Direction dir, bool related) {
   stop();
-  setStatus(Status::IDLE);
+  
+  if (!related && holdClickCnt == 1) {
+	holdClickCnt = 0;
+
+	for (int i=0;i<RELATED_SHUTTER_COUNT_MAX;i++) {
+		ArduinoDevice *dev = abu->getDeviceByPin(relatedShutters[i]);
+		if (dev != nullptr && dev->getType() == VirtualDeviceType::BLINDS_CONTROL) {
+			WindowShadingDevice *wsdev = reinterpret_cast<WindowShadingDevice*>(dev);
+			
+			wsdev->holdFinished(cnt, dir, true);
+		}
+	}
+  }
+  
+  if (status == Status::UNINIT || status == Status::INIT)
+	setStatus(Status::UNINIT);
+  else	  
+	setStatus(Status::IDLE);
+
   updateRequestFromActual();
 //  setRequest((actPosition+5)/10, (actShadow+5)/10);
 }
@@ -507,7 +596,7 @@ void WindowShadingDevice::start(Direction dir) {
 	
 void WindowShadingDevice::stop() {
 	if (SHADING_DEBUG)
-		LOG_U("stop");
+		LOG_U("stop " << (int)pin);
 	
 	if (ArduinoAndamBusUnit::pinValid(pinDirDown) && ArduinoAndamBusUnit::pinValid(pinMove)) {
 		digitalWrite(pinMove, HIGH);

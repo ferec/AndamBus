@@ -41,9 +41,12 @@ class CircPumpDevice:public ArduinoDevice,TimeGuard {
 //    uint32_t t_addrh, t_addrl;
     uint16_t runPeriod, idlePeriod, idlePeriodHigh; // in seconds; will not change output pin value until noSwitchPeriod seconds
 //    uint8_t tBusIndex, tDevIndex;
-  
+	uint8_t manualMode;
 
 	BusDeviceHelper tmLimit;
+	
+	uint8_t portIdNight;
+	bool nightMode;
 };
 
 

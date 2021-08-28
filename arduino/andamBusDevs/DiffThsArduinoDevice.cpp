@@ -224,6 +224,8 @@ void DiffThsArduinoDevice::doWork() {
     return;
   }
 
+//  LOG_U("tempL=" << tempL << ",tLimit=" << tLimit << ",tempH=" << tempH);
+
   if (tLimit <= tempL) {
     if (isTGActive()) {
 //      LOG_U(F("turning off pump - limit reached"));

@@ -67,8 +67,8 @@ uint8_t SolarThermostatDevice::restore(uint8_t data[], uint8_t length)
   uint32_t al = data32[cnt32++];
   tmSwitch.setThermometerAddress(ah, al);
 
-/*  LOG_U(F("restoring tt_addrh") << iom::hex << tt_addrh);
-  LOG_U(F("restoring tt_addrl") << iom::hex << tt_addrl);*/
+//  LOG_U(F("restoring tmSwitch ah=") << iom::hex << ah);
+//  LOG_U(F("restoring tmSwitch al=") << iom::hex << al);
 
   uint16_t *data16 = (uint16_t*)(data32 + cnt32);
 
@@ -125,6 +125,8 @@ uint8_t SolarThermostatDevice::getPropertyList(ItemProperty propList[], uint8_t 
     return size;
 
   uint8_t tid = tmSwitch.getThermometerId();
+//  LOG_U("tid=" << (int)tid << "," << tmSwitch.configMissing());
+  
 //  W1Slave *dev = dev = getBusDeviceByIndex(ttBusIndex, ttDevIndex);
   if (tid != 0) {
     propList[cnt].type = AndamBusPropertyType::ITEM_ID;
@@ -186,6 +188,7 @@ void SolarThermostatDevice::doWork() {
 /*  if (ttBusIndex == 0xff && tt_addrh != 0 && tt_addrl != 0)
     pairBusDev(tt_addrh, tt_addrl, ttBusIndex, ttDevIndex);*/
 
+//  LOG_U("isLinked=" << tmSwitch.isLinked() << ",isValid=" << valve.isTGValid());
 // only switch if both valve and thermometer is active
   if (tmSwitch.isLinked() && valve.isTGValid()) {
     if (tgTooFast() || valve.tgTooFast()) {
@@ -194,6 +197,8 @@ void SolarThermostatDevice::doWork() {
     }
   
     bool hasL = DiffThsArduinoDevice::getLowTemp(tempL);
+
+//    LOG_U("hasL=" << hasL << ",tLimitTank=" << tLimitTank << ",tempL=" <<tempL);
 
     if (hasL && tempL > tLimitTank) {
       valve.activateTGPin(true);
@@ -239,6 +244,6 @@ void SolarThermostatDevice::setPortId(uint8_t idx, uint8_t id) {
 }
 
 bool SolarThermostatDevice::configMissing() {
-	return tmSwitch.configMissing() || DiffThsArduinoDevice::configMissing();
+	return tmSwitch.configMissing() || DiffThsArduinoDevice::configMissing() || !valve.isTGValid();
 	
 }

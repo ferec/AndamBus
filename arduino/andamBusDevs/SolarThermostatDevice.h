@@ -35,7 +35,7 @@ class SolarThermostatDevice:public DiffThsArduinoDevice {
     bool secondary;
     TimeGuard valve;
 	
-	BusDeviceHelper tmSwitch;	
+	BusDeviceHelper tmSwitch;
 };
 
 #endif  //SOLARTHERMOSTAT_H

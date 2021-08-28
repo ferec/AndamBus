@@ -32,10 +32,13 @@ class ClickSwitchDevice:public ArduinoDevice,protected MultiClickDetector {
 
     virtual void clicked(uint8_t cnt);
     virtual void holdStarted(uint8_t cnt);
+	virtual void doWork();
     virtual void doWorkHighPrec();
 
   private:
     uint8_t portId1Click, portId2Click, portId3Click;
+	uint16_t tmOut1, tmOut2, tmOut3, tmOut;
+	uint32_t tmLastUpdate;
 //    bool highLogic, value1, value2, value3;
 	uint8_t boolPack;
 	ArduinoAndamBusUnit *abu;
@@ -43,6 +46,7 @@ class ClickSwitchDevice:public ArduinoDevice,protected MultiClickDetector {
     DevPortHelper dp1Click, dp2Click, dp3Click;
 
 	void setValue(uint8_t idx, bool value);
+	void handleTimeout(uint16_t &to, uint8_t idx, uint32_t now);
 };
 
 
