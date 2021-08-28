@@ -18,8 +18,9 @@
 #define SECONDARY_BUS_OFFSET MAX_VIRTUAL_PORTS  // ID of buses are 0x20-0x43
 
 #define ANDAMBUS_UNIT_SW_VERSION_MAJOR 1
-#define ANDAMBUS_UNIT_SW_VERSION_MINOR 2
-#define ANDAMBUS_UNIT_SW_VERSION_BUILD 5
+#define ANDAMBUS_UNIT_SW_VERSION_MINOR 5
+#define ANDAMBUS_UNIT_SW_VERSION_BUILD 2
+#define ANDAMBUS_UNIT_SW_BUILD_DATE __DATE__
 
 #define ARDUINO_SERIAL_RX_PIN 17
 #define ARDUINO_SERIAL_TX_PIN 16
@@ -64,6 +65,7 @@ class ArduinoAndamBusUnit:public AndamBusUnit
         ArduinoW1* getBusByIndex(uint8_t idx);
         uint8_t getBusIdByPin(uint8_t pin);
         ArduinoDevice* getDeviceById(uint8_t id);
+        ArduinoDevice* getDeviceByPin(uint8_t pin);
 		
         W1Slave* getBusDeviceById(uint8_t id, uint8_t &busIndex, uint8_t &devIndex);
         W1Slave* getBusDeviceByIndex(uint8_t busIndex, uint8_t devIndex);
@@ -71,6 +73,8 @@ class ArduinoAndamBusUnit:public AndamBusUnit
         W1Slave* getBusDevicePortById(uint8_t id);
         DevicePort* getDevicePortById(uint8_t id);
 		uint8_t getDeviceIndexByPin(uint8_t pin);
+        uint8_t getDeviceId(uint8_t index);
+        uint8_t getDeviceIndex(uint8_t id);
 
         void blockPin(uint8_t pin);
         void unblockPin(uint8_t pin);
@@ -139,8 +143,6 @@ class ArduinoAndamBusUnit:public AndamBusUnit
 		// ID management
         uint8_t getPortId(uint8_t index);
         uint8_t getPortIndex(uint8_t id);
-        uint8_t getDeviceId(uint8_t index);
-        uint8_t getDeviceIndex(uint8_t id);
 		uint8_t getDeviceIndexOwningPort(uint8_t id);
         uint8_t getBusId(uint8_t index);
         uint8_t getBusIndex(uint8_t id);

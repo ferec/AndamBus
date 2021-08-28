@@ -29,7 +29,7 @@ int ArduinoPin::getValue() {
   if (isInput())
     return isAnalog()?analogRead(pin):(digitalRead(pin)!=lowVal);
 
-//  LOG_U("read pin=" << digitalRead(pin) << " " << lowVal << " " << value);
+  //LOG_U("read pin=" << digitalRead(pin) << " " << lowVal << " " << value);
   return value;
 }
 
@@ -43,8 +43,8 @@ void ArduinoPin::setValue(int16_t _value) {
   value = _value;
   if (_value < 0)
     value = 0;
-  if (_value > 255)
-    value = 255;
+/*  if (_value > 255)
+    value = 255;*/
 
   if (type == VirtualPortType::DIGITAL_OUTPUT)
     digitalWrite(pin, value?HIGH:LOW);
@@ -105,14 +105,19 @@ bool ArduinoPin::isChanged() {
 	if (isOutput())
 		return BB_READ(boolPack, AR_PIN_CHANGED);
 
+//	LOG_U("isChanged " << getValue() << " " << value);
 	return getValue() != value;
 }
 
 void ArduinoPin::setChanged(bool val) {
-	if (val)
-		BB_TRUE(boolPack,AR_PIN_CHANGED);
-	else
-		BB_FALSE(boolPack,AR_PIN_CHANGED);
+	if (isOutput()) {
+		if (val)
+			BB_TRUE(boolPack,AR_PIN_CHANGED);
+		else
+			BB_FALSE(boolPack,AR_PIN_CHANGED);
+	} else {
+		value = getValue();
+	}
 }
 
 bool ArduinoPin::isActive() {

@@ -7,7 +7,7 @@
 
 ArduinoAndamBusUnit *ArduinoW1::abu = nullptr;
 
-ArduinoW1::ArduinoW1():active(false),inConversion(false),lastWork(0),convertSeconds(DEFAULT_CONVERT_SECONDS),devCount(0) {
+ArduinoW1::ArduinoW1():active(false),inConversion(0),lastWork(0),convertSeconds(DEFAULT_CONVERT_SECONDS),devCount(0) {
 //  LOG_U("construct bus " << this);
 }
 
@@ -23,7 +23,15 @@ void ArduinoW1::doWork() {
 //  LOG_U("bus " << iom::dec << (int)pin << " doWork");
 
 //  LOG_U("inConversion " << inConversion << " isConversionComplete " << sensors.isConversionComplete() << " " << this);
-  if (inConversion && sensors.isConversionComplete())
+  if (inConversion > 0) {
+	  inConversion++;
+	  if (inConversion > 5) {
+		  markSensorsAge();
+		  inConversion = 0;
+	  }
+  }
+
+  if (inConversion>0 && sensors.isConversionComplete())
 	refreshValues();
 
   if (lastWork+convertSeconds <= now || lastWork > now) {
@@ -34,7 +42,7 @@ void ArduinoW1::doWork() {
       runDetect();
     }
     
-    LOG_U("bus " << iom::dec << (int)pin << " convert");
+    LOG_U(F("bus ") << iom::dec << (int)pin << F(" convert"));
 
 
 	if (getDeviceCount()>0)
@@ -43,6 +51,18 @@ void ArduinoW1::doWork() {
       
     lastWork = now;
   }
+}
+
+void ArduinoW1::markSensorsAge() {
+  for(int i=0;i<ANDAMBUS_MAX_BUS_DEVS;i++) {
+    if (slaves[i].isActive()) {
+        if (slaves[i].age < 0xff) {
+          slaves[i].age++;
+		  slaves[i].setChanged(true);
+		}
+	}
+  }
+	
 }
 
 void ArduinoW1::runDetect() {
@@ -58,7 +78,7 @@ void ArduinoW1::runDetect() {
 }
 
 void ArduinoW1::refreshValues() {
-  if (!inConversion || !sensors.isConversionComplete()) // no need to refresh if no convert was issued or is not complete yet
+  if (inConversion==0 || !sensors.isConversionComplete()) // no need to refresh if no convert was issued or is not complete yet
     return;
 	
   for(int i=0;i<ANDAMBUS_MAX_BUS_DEVS;i++) {
@@ -77,8 +97,11 @@ void ArduinoW1::refreshValues() {
 			slaves[i].value = valx;
 			slaves[i].setChanged(true);
 		}
-		
-        slaves[i].age=0;
+
+		if (slaves[i].age>0) {
+			slaves[i].setChanged(true);			
+			slaves[i].age=0;
+		}
 //        LOG_U("temp address " << iom::hex << htonl(((uint32_t*)addr)[0]) << htonl(((uint32_t*)addr)[1]) << " = " << iom::dec << slaves[i].value);
       } else {
         if (slaves[i].age < 0xff) {
@@ -89,15 +112,16 @@ void ArduinoW1::refreshValues() {
       }
     }
   }
-  inConversion = false;
+  inConversion = 0;
 }
 
 void ArduinoW1::convert() {
   unsigned long start = millis();
+  
   sensors.requestTemperatures();
-  inConversion = true;
+  inConversion = 1;
 
-//  LOG_U(F("convert ") << (millis()-start));
+  LOG_U(F("convert ") << (millis()-start));
 }
 
 void ArduinoW1::runCommand(OnewireBusCommand cmd) {
@@ -105,7 +129,7 @@ void ArduinoW1::runCommand(OnewireBusCommand cmd) {
 }
 
 void ArduinoW1::addSlave(DeviceAddress &addr) {
-  LOG_U("adding address " << iom::hex << htonl(((uint32_t*)addr)[0]) << htonl(((uint32_t*)addr)[1]));
+  LOG_U(F("adding address ") << iom::hex << htonl(((uint32_t*)addr)[0]) << htonl(((uint32_t*)addr)[1]));
 //  printAddress(addr);
 
   uint8_t idx;

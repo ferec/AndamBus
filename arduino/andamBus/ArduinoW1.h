@@ -55,13 +55,15 @@ class ArduinoW1:public Persistent {
     unsigned long getConvertSeconds() { return convertSeconds; }
   private:
     uint8_t pin, devCount;
-    bool inConversion;
+    uint8_t inConversion;
     unsigned long lastWork, convertSeconds;
     
     OneWire w1;
     DallasTemperature sensors;
 	
 	bool isDeviceMissing() { return devCount > getDeviceCount(); }
+	
+	void markSensorsAge();
 };
 
 #endif // ARDUINOW1_H

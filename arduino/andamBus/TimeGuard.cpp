@@ -3,7 +3,7 @@
 #include "util.h"
 #include "ArduinoAndamBusUnit.h"
 
-TimeGuard::TimeGuard(uint8_t _pin):lastSwitch(0),tgPortId(0) {
+TimeGuard::TimeGuard(uint8_t _pin):lastSwitch(0),tgPortId(0),noSwitchPeriod(1) {
   
   setTGPin(_pin);
 }

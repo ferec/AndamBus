@@ -19,6 +19,7 @@ bool DevPortHelper::validatePairing() {
 //  LOG_U("validatePairing pin=" << iom::dec << (int)pin << " idx=" << (int)idx << " portIdx=" << (int)portIdx);
   if (abu == nullptr)
 		return false;
+//  LOG_U("abu not null");
   if (isPin())
 	return portIdx < MAX_VIRTUAL_PORTS && abu->pins[portIdx].isActive();
   else { //is virtual device

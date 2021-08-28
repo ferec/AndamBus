@@ -45,10 +45,13 @@ void BusDeviceHelper::setThermometerAddress(uint32_t _ah, uint32_t _al) {
 uint8_t BusDeviceHelper::getThermometerId() {
   if (abu == nullptr)
 	  return 0;
+
+  if (bi == 0xff && !configMissing())
+    pairBusDev();
   
   W1Slave *dev = abu->getBusDeviceByIndex(bi, di);
   
-//  LOG_U("getThermometerId=" << dev);
+//  LOG_U("getThermometerId=" << dev << " bi=" << (int)bi << ",di=" <<(int)di);
   if (dev != nullptr)
 	  return dev->id;
 

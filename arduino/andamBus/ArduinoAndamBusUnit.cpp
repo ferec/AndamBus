@@ -513,7 +513,7 @@ uint8_t ArduinoAndamBusUnit::getChangedValues(ItemValue values[], bool full) {
       for (int j = 0; j < ANDAMBUS_MAX_BUS_DEVS; j++) {
 		W1Slave &ws = bus->slaves[j];	
         if (ws.isActive() && (full || ws.isChanged())) {
-          //              LOG_U("value for " << bus.slaves[j].portId << " = " << bus.slaves[j].value);
+          LOG_U("value for " << ws.portId << " = " << ws.value << " age " << ws.age);
 
           values[cnt].id = ws.portId;
           values[cnt].age = ws.age;
@@ -667,6 +667,13 @@ bool ArduinoAndamBusUnit::removePort(uint8_t id) {
 ArduinoDevice* ArduinoAndamBusUnit::getDeviceById(uint8_t id) {
   for (int i = 0; i < MAX_VIRTUAL_DEVICES; i++)
     if (devs[i] != nullptr && devs[i]->isActive() && devs[i]->getId() == id)
+      return devs[i];
+  return nullptr;
+}
+
+ArduinoDevice* ArduinoAndamBusUnit::getDeviceByPin(uint8_t pin) {
+  for (int i = 0; i < MAX_VIRTUAL_DEVICES; i++)
+    if (devs[i] != nullptr && devs[i]->isActive() && devs[i]->getPin() == pin)
       return devs[i];
   return nullptr;
 }
